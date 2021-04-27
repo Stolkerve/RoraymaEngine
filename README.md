@@ -4,10 +4,16 @@ Is a 2D opengl game engine with editor and scripting.
 
 - Use c++ 17.
 - The scripting language is python (3.x).
-- Have a text editor.
 - Dynamic rendering
  
 ![alt text](https://github.com/Stolkerve/RoraymaEngine/blob/main/assets/Editor.PNG?raw=true)
+
+## Features
+- Audio system
+- Build system
+- Support for Linux, Android
+- Text rendering
+
 
 ## Dependencies
 - Premake5
