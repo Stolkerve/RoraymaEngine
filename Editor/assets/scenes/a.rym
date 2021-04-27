@@ -1,0 +1,24 @@
+Scene: Test Scene
+Entitys:
+  - Entity: Sprite
+    TransformComponent:
+      Position: [-28.0991879, 38.0165253]
+      Scale: [1, 1]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: carita
+      TexturePath: C:\Dev\RoraymaEngine\RoraymaEditor\assets\Textures\carita.png
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false
+  - Entity: Sprite_1
+    TransformComponent:
+      Position: [42.975193, 16.5289631]
+      Scale: [1, 1]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: carita
+      TexturePath: C:\Dev\RoraymaEngine\RoraymaEditor\assets\Textures\carita.png
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false

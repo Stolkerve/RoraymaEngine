@@ -1,0 +1,12 @@
+# Binaries
+**/bin/
+bin-int/
+
+*.log
+*.pyc
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user

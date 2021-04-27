@@ -1,0 +1,7 @@
+#Default Window Configuration
+name: RoraymaEngine
+fullscreen: false
+resize: true
+v_sync: false
+width: 1280
+height: 720
