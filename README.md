@@ -45,6 +45,7 @@ this -----> #error blablabla
 `./premake5 gmake2`
 This will generate MakeFile. And for compile type.
 `make`
+Once it finish compiling, a folder named bin will be create with the binary, then you must drop from the Editor folder imgui.ini, keys_map.yaml, window_config.yaml, assets to where is the binary.
 ### Mac
 `Why you use mac??????????????????`
 
