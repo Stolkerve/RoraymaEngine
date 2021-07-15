@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <string_view>
+#include <unordered_set>
 
 #include "NativeScript.hh"
 #include "PyScript.hh"
@@ -44,7 +45,8 @@ namespace rym
 		glm::vec2 m_Size;
 
 		std::vector<std::shared_ptr<Entity>> m_Entitys;
-		std::vector<std::shared_ptr<Entity>> m_ScriptingEntitys;
+		//std::vector<std::shared_ptr<Entity>> m_ScriptingEntitys;
+		std::unordered_set<std::shared_ptr<Entity>> m_ScriptingEntitys;
 		std::queue<uint32_t> m_AvailableEntities;
 		friend class EntitysPanel;
 		friend class SceneSerializer;

@@ -278,6 +278,8 @@ namespace rym
             {
                 if (e->HaveComponent<PyScriptComponent>())
                 {
+                    m_ScriptingEntitys.insert(e);
+                    //RYM_INFO(m_ScriptingEntitys.size());
                     auto script = e->GetComponent<PyScriptComponent>();
 					if (script->ptr)
 					{

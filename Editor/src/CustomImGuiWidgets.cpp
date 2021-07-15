@@ -69,7 +69,7 @@ namespace rym {
 	}
 
 
-	bool DrawDragIntPlusMinus(const char* label, int* value, int reset, float min, float max)
+	bool DrawDragIntPlusMinus(const char* label, int* value, int reset, int min, int max)
 	{
 		ImGui::PushID(label);
 		ImGui::Text(label);

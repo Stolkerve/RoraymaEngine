@@ -1,10 +1,10 @@
 #pragma once
 
 #include "../Core/Assert.hh"
+#include "Components.hh"
 #include "Nodes.hh"
 #include <unordered_map>
 #include <memory>
-
 
 namespace rym
 {
@@ -14,11 +14,11 @@ namespace rym
 		template<class T, typename ... Params>
 		void AddComponent(Params&&... params)
 		{
-			auto type = reinterpret_cast<T>::GetType();
+			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
-				m_Components[type] = new reinterpret_cast<T>(std::forward<Params>(params)...);
+				m_Components[type] = reinterpret_cast<void*>(new T(std::forward<Params>(params)...));
 				return;
 			}
 			RYM_CORE_ERROR("The entity {0} already have the {1} component ", Tag, type);
@@ -27,7 +27,7 @@ namespace rym
 		template <class T>
 		void DeleteComponent()
 		{
-			auto type = reinterpret_cast<T>::GetType();
+			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
@@ -41,21 +41,21 @@ namespace rym
 		template <class T>
 		T* GetComponent() const
 		{
-			auto type = reinterpret_cast<T>::GetType();
+			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
 				//RYM_CORE_ASSERT(false, "The entity " + Tag + " cannot get the " + " component");
 				return nullptr;
 			}
-			return reinterpret_cast<T*>(it->second);
+			return static_cast<T*>(it->second);
 		}
 
 		// It is only works in python
 		template <class T>
 		bool HaveComponent()
 		{
-			auto type = reinterpret_cast<T>::GetType();
+			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 				return false;

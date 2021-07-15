@@ -6,6 +6,8 @@
 #include <vector>
 
 #include "AssetsManager.hh"
+#include "Components.hh"
+#include "Entity.hh"
 
 namespace rym
 {

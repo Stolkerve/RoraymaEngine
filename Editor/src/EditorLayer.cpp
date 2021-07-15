@@ -364,7 +364,7 @@ void EditorLayer::OnImGui()
         }
 
         uint32_t sceneTextID = m_FrameBuffer->GetColorAttachment();
-        ImGui::Image(reinterpret_cast<void*>(sceneTextID), { m_ViewportSize.x, m_ViewportSize.y }, { 0, 1 }, { 1, 0 });
+        ImGui::Image((void*)sceneTextID, { m_ViewportSize.x, m_ViewportSize.y }, { 0, 1 }, { 1, 0 });
 
 		// gizmos
 		/*

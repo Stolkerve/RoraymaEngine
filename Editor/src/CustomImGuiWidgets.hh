@@ -30,7 +30,7 @@ namespace rym {
 		}
 	}
 
-	bool DrawDragIntPlusMinus(const char* label, int* value, int reset = 0, float min = 0.f, float max = 0.f);
+	bool DrawDragIntPlusMinus(const char* label, int* value, int reset = 0, int min = 0, int max = 0);
 
 	bool DrawDragFloat(const char* label, float* value, float force, float min = 0.f, float max = 0.f);
 

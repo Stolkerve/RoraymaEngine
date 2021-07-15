@@ -181,7 +181,7 @@ namespace rym
 
 	void FoldersPanel::DrawNode(std::shared_ptr<NodeFolder>& node, int id)
 	{
-		ImGui::PushID((size_t)&node);
+		ImGui::PushID(&node);
 
 		static const std::filesystem::path* droppedItem = nullptr;
 		static const std::filesystem::path* draggedItem = nullptr;
@@ -194,7 +194,7 @@ namespace rym
 			(m_SelectedItem == node.get() ? ImGuiTreeNodeFlags_Selected : 0) |
 			(!node->Data.isDirectory ? ImGuiTreeNodeFlags_Leaf : 0) |
 			ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_FramePadding;
-		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(id), flags,
+		bool opened = ImGui::TreeNodeEx((void*)id, flags,
 				!node->Data.isDirectory ?
 				fileName.c_str() : folderName.c_str());
 

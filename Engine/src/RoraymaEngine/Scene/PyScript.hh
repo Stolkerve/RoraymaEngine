@@ -2,7 +2,6 @@
 #include <pybind11/embed.h>
 #include "Entity.hh"
 
-
 namespace rym
 {
 	enum class PyComponentsType

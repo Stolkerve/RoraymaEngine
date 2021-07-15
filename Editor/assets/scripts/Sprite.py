@@ -11,8 +11,9 @@ class Sprite(PyScripting.PyScript):
 		self.transform.scale.x = 50.0
 		self.transform.scale.y = 50.0
 	def OnUpdate(self, _delta):
-		self.transform.position.x += 1.0
+		self.transform.position.x += 0.1
 		pass
 	def OnQuit(self):
 		pass
+
 
