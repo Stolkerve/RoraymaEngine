@@ -49,14 +49,21 @@ namespace rym
 
 		// Return the position of the cursor on the context window.
 		static glm::vec2 GetCursorPosition();
-		static glm::vec2 GetCursorViewportPosition();
+		static glm::vec2 GetCursorWorldPosition();
 		static glm::vec2 GetMouseScrolled();
 		static glm::vec2 GetMouseDelta();
+		static glm::vec2 GetMouseWorldDelta();
+
+		static void SetMousePosition(const glm::vec2& v);
+
 		static void SetCursorShape(CursorShape shape);
 		static void SetCursorMode(CursorMode mode);
 
 		static void SetScroll(float x, float y);
-		static void SetCursorPosition(float x, float y);
+
+		static void SetCursorWorldPosition(const glm::vec2& v);
+		static void SetMouseWorldDelta(const glm::vec2& v );
+
 		static void UpdateMouseDelta();
 		// vsg latam
 	private:
@@ -65,10 +72,13 @@ namespace rym
 			bool scrollChange;
 
 			glm::vec2 scroll;
+
 			glm::vec2 firstMouse;
 			glm::vec2 lastMouse;
-			glm::vec2 deltaMouse;
-			glm::vec2 cursorPosition;
+			glm::vec2 mouseDelta;
+
+			glm::vec2 cursorWorldPosition;
+			glm::vec2 mouseWorldDelta;
 
 			void* cursors[6];
 		};

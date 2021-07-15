@@ -37,7 +37,7 @@ namespace rym
 
 		T Data;
 		std::shared_ptr<Node<T> > Parent;
-	private:
+	protected:
 		std::vector<std::shared_ptr<Node<T>>> m_Childs;
 	};
 

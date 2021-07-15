@@ -123,6 +123,12 @@ namespace rym
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 		s_PolygonsBatching->DrawPolygon(vertices, transform, color);
 	}
+	void Renderer2D::DrawPolygon(std::string name, std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color)
+	{
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		s_PolygonsBatching->DrawPolygon(name, vertices, transform, color);
+	}
 
 	void Renderer2D::DrawRectTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color)
 	{

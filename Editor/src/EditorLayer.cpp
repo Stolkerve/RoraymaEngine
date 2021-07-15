@@ -19,6 +19,19 @@ void EditorLayer::OnStart()
 		});
 
 	CodeEditorPanel::Init();
+    
+    /*
+    for (size_t i = 0; i < 1000; i++)
+    {
+        std::shared_ptr<Entity> ent = nullptr;
+        m_Scenes.back()->CreateSprite("Sprite", ent);
+        ent->AddComponent<PyScriptComponent>();
+        auto script = ent->GetComponent<PyScriptComponent>();
+        script->filePath = "./assets/scripts/Sprite.py";
+        script->moduleName = "Sprite";
+        script->CreateScript(std::make_shared<PyScript>(script->moduleName, ent));
+    }
+    */
 }
 
 void EditorLayer::OnEvent(const Event& event)
@@ -41,13 +54,13 @@ void EditorLayer::RenderCartesianPlane()
 void EditorLayer::CalculateDeltaWorlMouse()
 {
 	const auto mouse = CaculateMouseViewport();
-	m_InitWorldMouse = glm::unProject(
+	m_FirstMouseViewport = glm::unProject(
 		glm::vec3(mouse.x, m_ViewportSize.y - mouse.y, 1.f),
 		m_EditorCamera.GetViewMatrix(),
 		m_EditorCamera.GetProjectionMatrix(),
 		glm::vec4(0.f, 0.f, m_ViewportSize.x, m_ViewportSize.y));
-	m_DeltaWorldMouse = m_InitWorldMouse - m_LastWorldMouse;
-	m_LastWorldMouse = m_InitWorldMouse;
+	m_MouseViewportDelta = m_FirstMouseViewport - m_LastMouseViewport;
+	m_LastMouseViewport = m_FirstMouseViewport;
 }
 
 glm::vec2 EditorLayer::CaculateMouseViewport()
@@ -62,7 +75,7 @@ void EditorLayer::MoveEntity(const std::shared_ptr<Entity>& entity, float delta)
     if (entity->HaveComponent<SpriteComponent>())
     {
         const auto transformComp = entity->GetComponent<TransformComponent>();
-        transformComp->translation += glm::vec2(m_DeltaWorldMouse.x, m_DeltaWorldMouse.y);
+        transformComp->translation += glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
     }
 }
 
@@ -105,9 +118,11 @@ void EditorLayer::SaveScene(const std::string& scenePath)
 
 void EditorLayer::UpdateEditorMode(float _delta)
 {
+    auto m = CaculateMouseViewport();
+
     // Update editor camera
-    if (m_ViewportHovered)
-        m_EditorCamera.Update(m_ViewportSize);
+    if (m_ViewportFocused)
+        m_EditorCamera.Update(m_ViewportSize, m);
 
     // Mouse picking relate
     m_FrameBuffer->ClearEntitysAttachment();
@@ -122,7 +137,6 @@ void EditorLayer::UpdateEditorMode(float _delta)
 	m_Scenes.back()->OnUpdateEditor(m_EditorCamera);
 
     // Picking
-    auto m = CaculateMouseViewport();
     m.y = m_ViewportSize.y - m.y; //Flip y axis
     static std::shared_ptr<Entity> entityPtrSelected = nullptr;
 
@@ -169,6 +183,7 @@ void EditorLayer::UpdateEditorMode(float _delta)
             entityPtrSelected = nullptr;
 		}
     }
+
 }
 
 void EditorLayer::UpdateGameMode(float _delta)
@@ -178,7 +193,11 @@ void EditorLayer::UpdateGameMode(float _delta)
 
 void EditorLayer::OnUpdate(float _delta)
 {
+    auto c = CaculateMouseViewport();
 	CalculateDeltaWorlMouse();
+    Input::SetCursorWorldPosition({ m_FirstMouseViewport.x, m_FirstMouseViewport.y});
+    Input::SetMouseWorldDelta(m_MouseViewportDelta);
+
 
     // Rendering stuff
 	if (m_ViewportSize.x >= 0 && m_ViewportSize.y >= 0 && m_NeedResize)
@@ -201,7 +220,7 @@ void EditorLayer::OnUpdate(float _delta)
 
 void EditorLayer::OnQuit()
 {
-	RYM_INFO("cerrando la escena: {}", this->GetName());
+	RYM_INFO ("cerrando la escena: {}", this->GetName());
 }
 
 void EditorLayer::OnImGui()

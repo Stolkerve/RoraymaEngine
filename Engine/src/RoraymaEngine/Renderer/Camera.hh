@@ -53,14 +53,14 @@ namespace rym
 		glm::mat4 GetViewMatrix() const { return m_ViewMatrix; }
 		glm::mat4 GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 
-		void Update(glm::vec2 viewport);
+		void Update(glm::vec2 viewport, glm::vec2 mouseViewport);
 		float GetZoomLevel() const { return m_ZoomLevel; }
 		void Zoom(float zoom);
 		void Resize(float width, float height);
 		const float GetAspectRatio() const { return m_AspectRatio; }
 	private:
 		void UpdateMatrix();
-		void PanMouse(glm::vec2 delta);
+		void PanMouse();
 		glm::vec2 PanSpeed();
 
 	private:
@@ -69,6 +69,9 @@ namespace rym
 		glm::mat4 m_ViewProjectionMatrix;
 
 		glm::vec3 m_Position;
+		glm::vec3 m_FirstMouseViewport;
+		glm::vec3 m_MouseViewportDelta;
+		glm::vec3 m_LastMouseViewport;
 
 		glm::vec2 m_Viewport;
 

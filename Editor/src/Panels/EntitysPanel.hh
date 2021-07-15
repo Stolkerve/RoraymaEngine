@@ -21,9 +21,7 @@ namespace rym
 		PropertiesPanel m_PropertiesPanel;
 		void AddNode(std::shared_ptr<Entity> entity, size_t id);
 
-		std::shared_ptr<Entity> SelectedEntity = nullptr;
+		std::shared_ptr<Entity> m_SelectedEntity = nullptr;
 		std::shared_ptr<Scene> m_CurrentScene;
-
-		ImGuiTreeNodeFlags m_Flags;
 	};
 }

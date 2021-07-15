@@ -58,9 +58,9 @@ private:
 	glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 	glm::vec2 m_ViewportPos = { 0.0f, 0.0f };
 
-	glm::vec3 m_LastWorldMouse = { 0.f, 0.f, 0.f };
-	glm::vec3 m_InitWorldMouse = { 0.f, 0.f, 0.f };
-	glm::vec3 m_DeltaWorldMouse = { 0.f, 0.f, 0.f };
+	glm::vec3 m_LastMouseViewport = { 0.f, 0.f, 0.f };
+	glm::vec3 m_FirstMouseViewport = { 0.f, 0.f, 0.f };
+	glm::vec3 m_MouseViewportDelta = { 0.f, 0.f, 0.f };
 
 	bool m_ViewportFocused;
 	bool m_ViewportHovered;

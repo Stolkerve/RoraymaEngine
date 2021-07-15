@@ -3,6 +3,8 @@
 #include "../Utils/Triangulate.hh"
 
 #include <future>
+#include <unordered_map>
+#include <ppl.h>
 namespace rym
 {
 	namespace api
@@ -17,6 +19,8 @@ namespace rym
 			DrawCalls = 0;
 			NumOfVertices = 0;
 		}
+
+		static std::unordered_map<std::string, std::vector<glm::vec2>> s_Meshes;
 
 		Polygons::Polygons()
 		{
@@ -52,15 +56,35 @@ namespace rym
 			m_TextureSlots[0] = AssetsManager::GetTexture("WhiteTexture");
 
 			std::vector<glm::vec2> cirVertives;
+/*
+			m_CircleVertices.reserve(360);
+			float x, y;
+			for (double i = 0; i <= 360;) {
+				x = 5 * cos(i);
+				y = 5 * sin(i);
+				m_CircleVertices.push_back({ x, y });
+				i = i + .5;
+				x = 5 * cos(i);
+				y = 5 * sin(i);
+				m_CircleVertices.push_back({ x, y });
+				m_CircleVertices.push_back({ 0, 0 });
+				i = i + .5;
+			}
+
+			auto a = m_CircleVertices.data();
+*/
+
+
 			size_t segments = 30;
 			cirVertives.reserve(segments);
 			for (size_t i = 0; i < segments; i++)
 			{
 				float theta = 2.0f * 3.1415926f * float(i) / float(segments);
-				cirVertives.push_back({ glm::cos(theta), glm::sin(theta) });
+				cirVertives.push_back({ 0.5f * glm::cos(theta), 0.5f * glm::sin(theta) });
 			}
 			m_CircleVertices.reserve(cirVertives.size());
 			Triangulate::Process(cirVertives, m_CircleVertices);
+			auto a = m_CircleVertices.data();
 		}
 
 		Polygons::~Polygons()
@@ -70,13 +94,12 @@ namespace rym
 
 		void Polygons::DrawQuad(const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
-			constexpr uint32_t quadVertexCount = 6;
 			constexpr float textureIndex = 0.0f; // White Texture
 
-			if (m_VerticesCount >= m_MaxVertices)
+			if (m_VerticesCount + m_QuadVertexCount >= m_MaxVertices)
 				NextBatch();
 
-			for (uint32_t i = 0; i < quadVertexCount; i++)
+			for (uint32_t i = 0; i < m_QuadVertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * QuadVertexPositions[i];
 				m_VertexBufferPtr->Color = color.GetColor();
@@ -87,13 +110,13 @@ namespace rym
 				m_VertexBufferPtr++;
 			}
 
-			m_VerticesCount += quadVertexCount;
-			BatchStatistics::Get().NumOfVertices += quadVertexCount;
+			m_VerticesCount += m_QuadVertexCount;
+			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
 		}
 
 		void Polygons::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer, int ID)
 		{
-			if (m_VerticesCount >= m_MaxVertices)
+			if (m_VerticesCount + m_QuadVertexCount >= m_MaxVertices)
 				NextBatch();
 
 			float textureIndex = 0.0f;
@@ -131,6 +154,8 @@ namespace rym
 			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
 		}
 
+		static std::mutex myMutex;
+
 		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int ID)
 		{
 			uint32_t vertexCount = m_CircleVertices.size();
@@ -150,6 +175,22 @@ namespace rym
 				m_VertexBufferPtr++;
 			}
 
+			size_t i = 0;
+				//std::lock_guard<std::mutex> lock{ myMutex };
+
+			/*
+			std::for_each(std::execution::par, m_CircleVertices.begin(), m_CircleVertices.end(), [&](const glm::vec2& v) {
+				std::lock_guard<std::mutex> lock{ myMutex };
+				m_VertexBufferPtr->Position = transform * glm::vec4(m_CircleVertices[i], 0.f, 1.f);
+				m_VertexBufferPtr->Color = color.GetColor();
+				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
+				m_VertexBufferPtr->TexIndex = textureIndex;
+				m_VertexBufferPtr->Layer = 0.f;
+				m_VertexBufferPtr->EntityID = ID;
+				m_VertexBufferPtr++;
+				i++;
+				});
+			*/
 
 			m_VerticesCount += vertexCount;
 			BatchStatistics::Get().NumOfVertices += vertexCount;
@@ -169,6 +210,41 @@ namespace rym
 			for (uint32_t i = 0; i < vertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * glm::vec4(result[i], 0.f, 1.f);
+				m_VertexBufferPtr->Color = color.GetColor();
+				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
+				m_VertexBufferPtr->TexIndex = textureIndex;
+				m_VertexBufferPtr->Layer = 0.f;
+				m_VertexBufferPtr->EntityID = ID;
+				m_VertexBufferPtr++;
+			}
+
+			m_VerticesCount += vertexCount;
+			BatchStatistics::Get().NumOfVertices += vertexCount;
+		}
+
+		void Polygons::DrawPolygon(std::string name, const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int ID)
+		{
+			std::vector<glm::vec2> result; // TODO: reserve space
+
+			auto it = s_Meshes.find(name);
+			if (it != s_Meshes.end()) {
+				
+			}
+			else {
+				Triangulate::Process(vertices, result);
+				s_Meshes.insert({ name, result });
+			}
+
+
+			uint32_t vertexCount = result.size();
+			constexpr float textureIndex = 0.0f; // White Texture
+
+			if (m_VerticesCount + vertexCount >= m_MaxVertices)
+				NextBatch();
+
+			for (uint32_t i = 0; i < vertexCount; i++)
+			{
+				m_VertexBufferPtr->Position = transform * glm::vec4(s_Meshes[name][i], 0.f, 1.f);
 				m_VertexBufferPtr->Color = color.GetColor();
 				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
 				m_VertexBufferPtr->TexIndex = textureIndex;
@@ -237,7 +313,7 @@ namespace rym
 			for (uint32_t i = 0; i < m_TextureSlotIndex; i++)
 				m_TextureSlots[i]->Bind(i);
 
-			Renderer::DrawArrays(m_VertexArray, 0, m_VerticesCount);
+			Renderer::DrawArrays(m_VertexArray, 0, m_VerticesCount); // GL_TRIANGLES
 			BatchStatistics::Get().DrawCalls++;
 		}
 

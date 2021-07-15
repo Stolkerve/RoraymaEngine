@@ -95,9 +95,9 @@ namespace rym
 		return glm::fvec2(pos);
 	}
 
-	glm::vec2 Input::GetCursorViewportPosition()
+	glm::vec2 Input::GetCursorWorldPosition()
 	{
-		return s_MouseData.cursorPosition;
+		return s_MouseData.cursorWorldPosition;
 	}
 
 	glm::vec2 Input::GetMouseScrolled()
@@ -115,7 +115,18 @@ namespace rym
 
 	glm::vec2 Input::GetMouseDelta()
 	{
-		return s_MouseData.deltaMouse;
+		return s_MouseData.mouseDelta;
+	}
+
+	glm::vec2 Input::GetMouseWorldDelta()
+	{
+		return s_MouseData.mouseWorldDelta;
+	}
+
+	void Input::SetMousePosition(const glm::vec2& v)
+	{
+		//glfwSetInputMode(App::GetInstance().GetWindow()->GetContextWindow(), GLFW_CURSOR, (int)mode);
+		glfwSetCursorPos(App::GetInstance().GetWindow()->GetContextWindow(), v.x, v.y);
 	}
 
 	void Input::SetCursorMode(CursorMode mode)
@@ -129,15 +140,20 @@ namespace rym
 		s_MouseData.scrollChange = true;
 	}
 
-	void Input::SetCursorPosition(float x, float y)
+	void Input::SetCursorWorldPosition(const glm::vec2& v)
 	{
-		s_MouseData.cursorPosition = { x, y };
+		s_MouseData.cursorWorldPosition = v;
+	}
+
+	void Input::SetMouseWorldDelta(const glm::vec2& v)
+	{
+		s_MouseData.mouseWorldDelta = v;
 	}
 
 	void Input::UpdateMouseDelta()
 	{
 		s_MouseData.firstMouse = GetCursorPosition();
-		s_MouseData.deltaMouse = s_MouseData.firstMouse - s_MouseData.lastMouse;
+		s_MouseData.mouseDelta = s_MouseData.firstMouse - s_MouseData.lastMouse;
 		s_MouseData.lastMouse = s_MouseData.firstMouse;
 	}
 }

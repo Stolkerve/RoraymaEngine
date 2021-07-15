@@ -1,4 +1,4 @@
-include "./vendor/premake/premake_customization/solution_items.lua"
+--include "./vendor/premake/premake_customization/solution_items.lua"
 
 workspace "RoraymaEngine"
 	architecture "x86_64"
@@ -11,10 +11,7 @@ workspace "RoraymaEngine"
 		"Dist"
 	}
 
-	solution_items
-	{
-		".editorconfig"
-	}
+
 
 	flags
 	{
@@ -36,7 +33,7 @@ IncludeDir["yaml_cpp"] = "%{wks.location}/Engine/vendor/yaml-cpp/include"
 IncludeDir["pybind11"] = "%{wks.location}/Engine/vendor/pybind11"
 
 group "Dependencies"
-	include "vendor/premake"
+	
 	include "Engine/vendor/GLFW"
 	include "Engine/vendor/Glad"
 	include "Engine/vendor/imgui"

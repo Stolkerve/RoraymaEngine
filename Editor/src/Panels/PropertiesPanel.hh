@@ -1,8 +1,6 @@
 #pragma once
 
 #include <RoraymaEngine/Scene/Scene.hh>
-#include <RoraymaEngine/Scene/AssetsManager.hh>
-#include <imgui/imgui.h>
 
 /*
  Its class exist inside EntitysPanel class as a private member

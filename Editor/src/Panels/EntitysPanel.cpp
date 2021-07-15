@@ -1,6 +1,7 @@
 #include "EntitysPanel.hh"
 #include <RoraymaEngine/Core/Input.hh>
 #include <RoraymaEngine/Core/ImGui/IconsFontAwesome5.h>
+#include <imgui/imgui.h>
 namespace rym
 {
 	EntitysPanel::EntitysPanel(std::shared_ptr<Scene> currentScene) :
@@ -14,13 +15,13 @@ namespace rym
 			entity->visible = !entity->visible;
 		ImGui::SameLine(0.f, spacing);
 		//(m_SelectedEntity ? ImGuiTreeNodeFlags_Selected : 0) |
-		ImGuiTreeNodeFlags flags = (SelectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_FramePadding;
+		ImGuiTreeNodeFlags flags = (m_SelectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_FramePadding;
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(id), flags, entity->Tag.c_str());
 		static std::shared_ptr<Entity> hoveredEntity = nullptr;
 		if (ImGui::IsItemClicked())
 		{
-			SelectedEntity = entity;
-			m_PropertiesPanel.EntityClicked(SelectedEntity);
+			m_SelectedEntity = entity;
+			m_PropertiesPanel.EntityClicked(m_SelectedEntity);
 		}
 
 		if (ImGui::IsItemHovered())
@@ -46,8 +47,8 @@ namespace rym
 
 	void EntitysPanel::EntityClicked(std::shared_ptr<Entity> entity)
 	{
-		SelectedEntity = entity;
-		m_PropertiesPanel.EntityClicked(SelectedEntity);
+		m_SelectedEntity = entity;
+		m_PropertiesPanel.EntityClicked(m_SelectedEntity);
 	}
 
 	void EntitysPanel::Render()
@@ -61,13 +62,13 @@ namespace rym
 			//auto& entitysArray = m_CurrentScene->m_Entitys;
 			for (size_t i = 0; i < m_CurrentScene->m_Entitys.size(); i++)
 			{
-				if (SelectedEntity &&
+				if (m_SelectedEntity &&
 					Input::IsKeyPressed(KeysCode::LeftControl) &&
 					Input::IsKeyJustPressed(KeysCode::D) &&
 					ImGui::IsWindowFocused())
 				{
-					//m_CurrentScene->m_Entitys.insert(m_CurrentScene->m_Entitys.begin() + i + 1, SelectedEntity);
-					m_CurrentScene->CreateEntity(SelectedEntity, i + 1);
+					//m_CurrentScene->m_Entitys.insert(m_CurrentScene->m_Entitys.begin() + i + 1, m_SelectedEntity);
+					m_CurrentScene->CreateEntity(m_SelectedEntity, i + 1);
 				}
 
 				if (m_CurrentScene->m_Entitys[i])
@@ -105,19 +106,22 @@ namespace rym
 		{
 			if (ImGui::MenuItem("Add Empty Entity"))
 			{
-				m_CurrentScene->CreateEntity("Empty_Entity", SelectedEntity);
-				m_PropertiesPanel.EntityClicked(SelectedEntity);
+				m_CurrentScene->CreateEntity("Empty_Entity", m_SelectedEntity);
+				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
 				ConsolePanel::GetInstace()->PushMessage("hola");
 			}
 			if (ImGui::MenuItem("Add Sprite"))
 			{
-				m_CurrentScene->CreateSprite("Sprite", SelectedEntity);
-				m_PropertiesPanel.EntityClicked(SelectedEntity);
+				m_CurrentScene->CreateSprite("Sprite", m_SelectedEntity);
+				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
 			}
 			if (ImGui::MenuItem("Add Camera"))
 			{
-				m_CurrentScene->CreateCamera("Camera", SelectedEntity);
-				m_PropertiesPanel.EntityClicked(SelectedEntity);
+				m_CurrentScene->CreateCamera("Camera", m_SelectedEntity);
+				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+			}
+			if (ImGui::MenuItem("Import Scene"))
+			{
 			}
 
 			ImGui::EndPopup();

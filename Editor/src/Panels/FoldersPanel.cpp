@@ -1,139 +1,17 @@
+
 #include "FoldersPanel.hh"
-#include "Modals.hh"
+#include "../CustomImGuiWidgets.hh"
+
+#include <RoraymaEngine/Utils/FileSystem.hh>
 
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <string>
+
 namespace rym
 {
-
-#ifdef RYM_PLATFORM_WINDOWS
-	#include <shellapi.h>
-	#include <Windows.h>
-#endif
 	// TODO: std::filesystem::is_directory is so expensive. Use only for one call function, not inside loops
-
-
-#ifdef RYM_PLATFORM_WINDOWS
-	static auto ROOT_PATH = "./"/*ProjectName*/;
-#else
-	static auto ROOT_PATH = "./" /* + GetProjectName*/;
-#endif
-
-	bool FilesHandler::Move(const std::filesystem::path& from, const std::filesystem::path& to)
-	{
-#if 1
-		std::error_code ec;
-		if (!std::filesystem::is_directory(from))
-		{
-			auto tmpTo = to.string() + "\\" + from.filename().string();
-			std::filesystem::rename(from, tmpTo, ec);
-		}
-		else
-		{
-			std::filesystem::rename(from, to, ec);
-		}
-
-		if (ec.value())
-		{
-			RYM_CRITICAL("{0} was not moved to {1}. Error messege: {2} \n Error Code: {3}", 
-				from.filename().string(), to.string(), ec.message(), ec.value());
-			return false;
-		}
-		RYM_WARN("{0} was moved to {1} successfully", from.filename().string(), to.string());
-		return true;
-#endif
-	}
-
-	bool FilesHandler::Rename(const std::filesystem::path& oldN, const std::filesystem::path& newN) noexcept
-	{
-		auto newName = (oldN.parent_path().string() + "\\" + newN.filename().string());
-		int success = std::rename(oldN.string().c_str(), newName.c_str());
-		if (!success)
-		{
-			RYM_CRITICAL("{} was not renamed", oldN.filename().string());
-			return false;
-		}
-		RYM_WARN("{} was renamed successfully", oldN.filename().string());
-		return true;
-	}
-
-	bool FilesHandler::Delete(const std::filesystem::path& file) noexcept
-	{
-		int success = std::remove(file.string().c_str());
-		if (!success)
-		{
-			RYM_CRITICAL("{} was not deleted.", file.filename().string());
-			return false;
-		}
-		RYM_WARN("{} was deleted successfully", file.filename().string());
-		return true;
-
-	}
-
-	bool FilesHandler::CreateNewFolder(const std::filesystem::path& newFolder) noexcept
-	{
-		std::error_code ec;
-		if (std::filesystem::create_directory(newFolder, ec))
-		{
-			RYM_WARN("{} folder was created succesfully", newFolder.filename().string());
-			return true;
-		}
-		RYM_CRITICAL("{0} folder was not created. Error: {1}", newFolder.filename().string(), ec.message());
-		return false;
-	}
-
-	bool FilesHandler::CreateNewFile(const std::filesystem::path& newFile, const char* data) noexcept
-	{
-		std::ofstream file(newFile);
-		if (file)
-		{
-			file << data;
-			file.close();
-			RYM_WARN("{} file was created succesfully", newFile.filename().string());
-			return true;
-		}
-		RYM_CRITICAL("{} file was not created", newFile.filename().string());
-		return false;
-	}
-
-	bool FilesHandler::MoveToReciclyBin(const std::filesystem::path& path) noexcept
-	{
-		#ifdef RYM_PLATFORM_WINDOWS
-			SHFILEOPSTRUCT fileOp;
-			ZeroMemory(&fileOp, sizeof(SHFILEOPSTRUCT));
-			fileOp.hwnd = NULL;
-			fileOp.wFunc = FO_DELETE;
-			//auto temp = path.string() + "\0\0";
-			auto temp2 = path.wstring();
-			temp2.append(1, '\0');
-			fileOp.pFrom = temp2.c_str();
-			fileOp.pTo = NULL;
-			fileOp.fFlags = FOF_ALLOWUNDO | FOF_NOERRORUI | FOF_NOCONFIRMATION | FOF_SILENT;
-			int res = SHFileOperation(&fileOp);
-			if (res == 0 && !fileOp.fAnyOperationsAborted)
-			{
-				RYM_WARN("{} was moved to trash successfully", path.filename().string());
-				return true;
-			}
-			RYM_CRITICAL("{0} was not moved to trash. Error {1}. Look SHFileOperation errors", path.filename().string(), res);
-			return false;
-		#else
-			std::string HOME_DIR(std::getenv("HOME"));
-			if (HOME_DIR.empty())
-			{
-				RYM_CRITICAL("No home path was fount, linux only error");
-				return false;
-			}
-			else
-			{
-				HOME_DIR += "/.local/share/Trash/files";
-				Move(path, HOME_DIR);
-			}
-		#endif
-	}
-
 
 	void FoldersPanel::IterateNodeFolder(const std::shared_ptr<NodeFolder>& node)
 	{
@@ -144,18 +22,19 @@ namespace rym
 		//node->Reserve(capacity);
 
 		size_t counter = 0;
+		// Look for a new file
+
 		for (const auto& entry : std::filesystem::directory_iterator(node->Data.Path,
 			std::filesystem::directory_options::skip_permission_denied))
 		{
+			// Ignore the existing files
 			auto it = std::find_if(node->begin(), node->end(), [&entry](const std::shared_ptr<NodeFolder>& n) {
 				return n->Data.Path == entry.path();
 				});
 
 			if (it != node->end())
 			{
-				// may be usefull 
-
-				//RYM_INFO("FILE OR DIRECTORY IGNORED");
+				// files ignored
 			}
 			else
 			{
@@ -167,8 +46,17 @@ namespace rym
 			}
 			counter++;
 		}
-		RYM_INFO("iteracion");
 
+		// Deleted deleted files (Outsize of this context)
+		auto it = std::find_if(node->begin(), node->end(), [&](const std::shared_ptr<NodeFolder>& n) {
+			return !std::filesystem::exists(n->Data.Path);
+			});
+		if (it != node->end())
+		{
+			node->DeleteChild(it);
+		}
+
+		// Deleted files (Peticion of the user)
 		if (node->Data.NeedDelete)
 		{
 			//auto de = node->Data.Path == m_DeletedItem.FilePath
@@ -196,7 +84,8 @@ namespace rym
 
 	FoldersPanel::FoldersPanel()
 	{
-
+		//RYM_INFO(std::filesystem::current_path().native());
+		RYM_INFO(std::filesystem::current_path().relative_path().string());
 		// Init extencions map
 		m_Extencions[".rym"] = Extencions::rym;
 
@@ -233,13 +122,14 @@ namespace rym
 		m_Extencions[".log"] = Extencions::text;
 
 		m_Root = std::make_shared<NodeFolder>();
-		m_Root->Data.Path = ROOT_PATH;
+		m_Root->Data.Path = FileSystem::GetWorkSpacePath();
 		m_Root->AddChild(std::make_shared<NodeFolder>());
 
 		auto& last = m_Root->Back();
-		last->Data.Path = ROOT_PATH;
-		last->Data.isDirectory = std::filesystem::is_directory(ROOT_PATH);
+		last->Data.Path = FileSystem::GetWorkSpacePath();
+		last->Data.isDirectory = true;
 		last->Parent = m_Root;
+
 		IterateNodeFolder(last);
 	}
 
@@ -304,10 +194,9 @@ namespace rym
 			(m_SelectedItem == node.get() ? ImGuiTreeNodeFlags_Selected : 0) |
 			(!node->Data.isDirectory ? ImGuiTreeNodeFlags_Leaf : 0) |
 			ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_FramePadding;
-
-		const bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(id), flags,
-			!node->Data.isDirectory ?
-			fileName.c_str() : folderName.c_str());
+		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(id), flags,
+				!node->Data.isDirectory ?
+				fileName.c_str() : folderName.c_str());
 
 		if (ImGui::IsItemToggledOpen() && node->Data.isDirectory)
 		{
@@ -369,7 +258,7 @@ namespace rym
 				if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FOLDDERS_PANEL"))
 				{
 					// TODO: use payload, now its work
-					if (FilesHandler::Move(m_SelectedItem->Data.Path, m_HoveredItem->Data.Path))
+					if (FileSystem::Move(m_SelectedItem->Data.Path, m_HoveredItem->Data.Path))
 					{
 						m_HoveredItem->Data.NeedUpdate = true;
 
@@ -396,7 +285,7 @@ namespace rym
 			static bool askTrash = false;
 			lastHovered = m_HoveredItem;
 			//RYM_INFO(lastHovered->Path.filename().string());
-			if (lastHovered->Data.Path != ROOT_PATH)
+			if (lastHovered->Data.Path != FileSystem::GetWorkSpacePath())
 			{
 				//ImGui::PushItemWidth(ImGui::CalcItemWidth() / 2);
 
@@ -432,7 +321,7 @@ namespace rym
 					parent->Data.NeedUpdate = true;
 					m_DeletedItem.FilePath = lastHovered->Data.Path;
 
-					FilesHandler::MoveToReciclyBin(m_DeletedItem.FilePath);
+					FileSystem::MoveToReciclyBin(m_DeletedItem.FilePath);
 
 					okDelete = false;
 					ImGui::CloseCurrentPopup();
@@ -467,12 +356,16 @@ namespace rym
 				DrawNode(c, id);
 				id++;
 			}
-			if (node->Data.NeedUpdate)
+			if (node->Data.NeedUpdate || timer >= 150.0f) {
 				IterateNodeFolder(node);
+				timer = 0.f;
+			}
 		}
 
 		if (opened)
 			ImGui::TreePop();
 		ImGui::PopID();
+
+		timer += 1.f / 60.f;
 	}
 };

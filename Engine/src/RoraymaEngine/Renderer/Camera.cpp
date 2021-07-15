@@ -74,7 +74,7 @@ namespace rym
 	{
 	}
 
-	void EditorCamera::Update(glm::vec2 viewport)
+	void EditorCamera::Update(glm::vec2 viewport, glm::vec2 mouseViewport)
 	{
 		m_Viewport = viewport;
 
@@ -84,11 +84,29 @@ namespace rym
 			Zoom(scroll);
 		}
 
-		glm::vec2 deltaMouse = Input::GetMouseDelta() * 0.03f;
+		m_FirstMouseViewport = glm::unProject(
+			glm::vec3(mouseViewport.x, viewport.y - mouseViewport.y, 1.f),
+			GetViewMatrix(),
+			GetProjectionMatrix(),
+			glm::vec4(0.f, 0.f, viewport.x, viewport.y));
+		m_MouseViewportDelta = m_FirstMouseViewport - m_LastMouseViewport;
+		m_LastMouseViewport = m_FirstMouseViewport;
+
+		auto mouse = Input::GetCursorPosition();
 		if (Input::IsButtonPressed(MouseCode::ButtonMiddle))
 		{
-			//RYM_INFO(m_StartMouse - m_LastMouse);
-			PanMouse(deltaMouse);
+			//RYM_INFO(mouseViewport);
+			PanMouse();
+			if (mouseViewport.x <= 0)
+			{
+				//Input::SetMousePosition({ viewport.x - 10, mouse.y });
+				//RYM_INFO("X0");
+			}
+			else if (mouseViewport.x >= viewport.x - 5)
+			{
+
+				//RYM_INFO("X1");
+			}
 		}
 
 		UpdateMatrix();
@@ -147,45 +165,15 @@ namespace rym
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
-	glm::vec2 EditorCamera::PanSpeed()
+	void EditorCamera::PanMouse()
 	{
-		float x = std::min(m_Viewport.x / 1000.0f, 2.4f); // max = 2.4f
-		float xFactor = 0.0366f * (x * x) - 0.1778f * x + 0.3021f;
-
-		float y = std::min(m_Viewport.y / 1000.0f, 2.4f); // max = 2.4f
-		float yFactor = 0.0366f * (y * y) - 0.1778f * y + 0.3021f;
-		return glm::vec2(xFactor * (m_ZoomLevel * 0.2f), yFactor * (m_ZoomLevel * 0.2f));
-		//return glm::vec2(xFactor, yFactor);
-	}
-
-	void EditorCamera::PanMouse(glm::vec2 delta)
-	{
-		auto speed = PanSpeed();
-
-		m_Position += glm::vec3(delta.x * -1.f * speed.x, delta.y * speed.y, 0.f);
+		auto delta = m_MouseViewportDelta * 0.5f;
+		//RYM_INFO(delta);
+		glm::vec2 speed = { 1.f , 1.f };
+		m_Position += glm::vec3(delta.x * speed.x, delta.y * speed.y, 0.f) * -1.f;
 	}
 
 	/*
-	void EditorCamera::Update(float _delta, const glm::vec2& viewport)
-	{
-		m_Viewport = viewport;
-		if (Input::IsButtonPressed(0))
-			PanMouse(deltaMouse);
-
-		if(Input::GetMouseScrolled().y)
-			SetZoom(deltaMouse);
-
-		UpdateView();
-	}
-
-	static glm::vec2 GlmNormalizeButWithOutThatFuckingNaNReturns(const glm::vec2& v)
-	{
-		if (v == glm::vec2(0.f))
-			return glm::vec2(0.f);
-		else
-			return glm::normalize(v);
-	}
-
 	void EditorCamera::SetZoom(const glm::vec2& delta)
 	{
 		auto speed = PanSpeed();
@@ -201,13 +189,6 @@ namespace rym
 			//m_Position += glm::vec3(whatever2.x * -1.f * speed.x, whatever2.y * speed.y, 0.f);
 		m_Zoom += scroll * (m_Zoom * 0.1f);
 		m_Zoom = std::max(m_Zoom, 0.1111f);
-	}
-
-	void EditorCamera::PanMouse(const glm::vec2& delta)
-	{
-		auto speed = PanSpeed();
-		// inverse the x axis
-		m_Position += glm::vec3(delta.x * -1.f * speed.x * 10.f, delta.y * speed.y * 10.f, 0.f);
 	}
 	*/
 }

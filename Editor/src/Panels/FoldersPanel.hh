@@ -2,8 +2,7 @@
 
 #include <RoraymaEngine/RoraymaEngine.hh>
 #include <filesystem>
-#include <iterator>
-#include <functional>
+
 namespace rym
 {
 	struct FoldersData
@@ -18,6 +17,7 @@ namespace rym
 		bool NeedUpdate = false;
 		bool NeedDelete = false;
 		bool isDirectory = false;
+		bool isRoot = false;
 	};
 
 	using NodeFolder = Node<FoldersData>;
@@ -30,20 +30,6 @@ namespace rym
 		music,
 		rym,
 		text
-	};
-
-	// TODO: Its shouldn't exits here, its must be 
-	class FilesHandler
-	{
-	public:
-		static bool Move(const std::filesystem::path& from, const std::filesystem::path& to);
-		static bool Rename(const std::filesystem::path& oldN, const std::filesystem::path& newN) noexcept;
-		static bool Delete(const std::filesystem::path& file) noexcept;
-		/// path of the parent folder + name of the new folder
-		static bool CreateNewFolder(const std::filesystem::path& newFolder) noexcept;
-		/// Path of the parent folder + name of the new file + extencion
-		static bool CreateNewFile(const std::filesystem::path& newFile, const char* data = nullptr) noexcept;
-		static bool MoveToReciclyBin(const std::filesystem::path& path) noexcept;
 	};
 
 	class FoldersPanel
@@ -70,5 +56,6 @@ namespace rym
 		std::shared_ptr<NodeFolder> m_Root;
 		std::shared_ptr<Scene> m_CurrentScene;
 		std::map<std::string_view, Extencions> m_Extencions;
+		float timer = 0.f;
 	};
 };

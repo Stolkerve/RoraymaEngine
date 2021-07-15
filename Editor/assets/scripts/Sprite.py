@@ -4,19 +4,14 @@ from PyScripting import Math, Input
 #VERY IMPORTANT DO NOT CHANGE THE FILE NAME.
 
 class Sprite(PyScripting.PyScript):
+	transform = None
 	def OnStart(self):
-		pass
+		self.transform = self.entity.GetTransformComponent()
+		self.transform.position.x = 0.0
+		self.transform.scale.x = 50.0
+		self.transform.scale.y = 50.0
 	def OnUpdate(self, _delta):
-		velocidad = 40.0
-		transform = self.entity.GetTransformComponent()
-		if(Input.IsKeyPressed(Input.KeyCode.D)):
-			transform.position.x += velocidad * _delta
-		elif(Input.IsKeyPressed(Input.KeyCode.A)):
-			transform.position.x -= velocidad * _delta
-		if(Input.IsKeyPressed(Input.KeyCode.W)):
-			transform.position.y += velocidad * _delta
-		elif(Input.IsKeyPressed(Input.KeyCode.S)):
-			transform.position.y -= velocidad * _delta
+		self.transform.position.x += 1.0
 		pass
 	def OnQuit(self):
 		pass

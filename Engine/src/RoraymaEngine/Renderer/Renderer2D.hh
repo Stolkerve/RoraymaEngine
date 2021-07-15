@@ -38,6 +38,7 @@ namespace rym
 		static void DrawTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color);
 		static void DrawRectTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color);
 		static void DrawPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color);
+		static void DrawPolygon(std::string name, std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color);
 
 		static void DrawLine(const std::pair<glm::vec2, glm::vec2>& positions, const Color& color, int layer = 0);
 		static void DrawWiredPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color);
