@@ -4,9 +4,16 @@ Is a 2D opengl game engine with editor and scripting.
 
 - Use c++ 17.
 - The scripting language is python (3.x).
-- Have a text editor.
-- Have a file explorer.
 - Dynamic rendering
+ 
+![alt text](https://github.com/Stolkerve/RoraymaEngine/blob/main/assets/Editor.PNG?raw=true)
+
+## Features
+- Audio system
+- Build system
+- Support for Linux, Android
+- Text rendering
+
 
 ## Dependencies
 - Premake5
@@ -38,6 +45,7 @@ this -----> #error blablabla
 `./premake5 gmake2`
 This will generate MakeFile. And for compile type.
 `make`
+Once it finish compiling, a folder named bin will be create with the binary, then you must drop from the Editor folder imgui.ini, keys_map.yaml, window_config.yaml, assets to where is the binary.
 ### Mac
 `Why you use mac??????????????????`
 

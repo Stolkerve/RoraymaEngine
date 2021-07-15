@@ -10,7 +10,7 @@ function queryTerminal(command)
 end
 
 function getPythonPath()
-	local p = queryTerminal('python -c "import sys; import os; print(os.path.dirname(sys.executable))"')
+	local p = queryTerminal('python3 -c "import sys; import os; print(os.path.dirname(sys.executable))"')
 
 	p = string.gsub(p, "\\\\", "\\")
 	p = string.gsub(p, "\\", "/")
