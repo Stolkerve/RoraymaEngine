@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Core/Assert.hh"
-#include "Components.hh"
 #include "Nodes.hh"
 #include <unordered_map>
 #include <memory>
@@ -15,11 +14,11 @@ namespace rym
 		template<class T, typename ... Params>
 		void AddComponent(Params&&... params)
 		{
-			auto type = T::GetType();
+			auto type = reinterpret_cast<T>::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
-				m_Components[type] = new T(std::forward<Params>(params)...);
+				m_Components[type] = new reinterpret_cast<T>(std::forward<Params>(params)...);
 				return;
 			}
 			RYM_CORE_ERROR("The entity {0} already have the {1} component ", Tag, type);
@@ -28,7 +27,7 @@ namespace rym
 		template <class T>
 		void DeleteComponent()
 		{
-			auto type = T::GetType();
+			auto type = reinterpret_cast<T>::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
@@ -42,7 +41,7 @@ namespace rym
 		template <class T>
 		T* GetComponent() const
 		{
-			auto type = T::GetType();
+			auto type = reinterpret_cast<T>::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
@@ -56,7 +55,7 @@ namespace rym
 		template <class T>
 		bool HaveComponent()
 		{
-			auto type = T::GetType();
+			auto type = reinterpret_cast<T>::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 				return false;
@@ -80,7 +79,7 @@ namespace rym
 		std::unordered_map<std::string, uint32_t> MapTagtoID;
 
 	private:
-		std::unordered_map<ComponentType, Component*> m_Components;
+		std::unordered_map<ComponentType, void*> m_Components;
 	};
 
 	using EntitysNode = Node<Entity>;

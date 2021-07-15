@@ -15,13 +15,10 @@ namespace rym
 {
 	using namespace api;
 
-	class Component
-	{};
-
 	using ComponentType = std::size_t;
 
 	// Transform component
-	struct TransformComponent : public Component
+	struct TransformComponent
 	{
 		glm::vec2 translation = { 0.0f, 0.0f };
 		glm::vec2 scale = { 1.0f, 1.0f };
@@ -44,7 +41,7 @@ namespace rym
 	};
 
 	// Sprite component
-	struct SpriteComponent : public Component
+	struct SpriteComponent
 	{
 		std::string texture;
 		rym::Color color = rym::Color::WHITE;
@@ -64,7 +61,7 @@ namespace rym
 		static ComponentType GetType();
 	};
 
-	struct CameraComponent : public Component
+	struct CameraComponent
 	{
 		bool current = false;
 
@@ -78,7 +75,7 @@ namespace rym
 	};
 
 	class NativeScript;
-	struct NativeScriptComponent : public Component
+	struct NativeScriptComponent
 	{
 		NativeScript* instance = nullptr; // its only exits to call the OnUpdate func onces.
 
@@ -98,7 +95,7 @@ namespace rym
 	};
 
 	class PyScript;
-	struct PyScriptComponent : public Component
+	struct PyScriptComponent
 	{
 		PyScriptComponent() = default;
 		PyScriptComponent(std::shared_ptr<PyScript>&& module)
