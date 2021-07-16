@@ -72,11 +72,12 @@ glm::vec2 EditorLayer::CaculateMouseViewport()
 
 void EditorLayer::MoveEntity(const std::shared_ptr<Entity>& entity, float delta)
 {
-    if (entity->HaveComponent<SpriteComponent>())
+    if (entity->HaveComponent<TransformComponent>())
     {
         const auto transformComp = entity->GetComponent<TransformComponent>();
         transformComp->translation += glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
     }
+
 }
 
 void EditorLayer::ChangeScene(const std::shared_ptr<Scene>& newScene)
@@ -122,7 +123,14 @@ void EditorLayer::UpdateEditorMode(float _delta)
 
     // Update editor camera
     if (m_ViewportFocused)
+    {
+        float scroll = Input::GetMouseScrolled().y;
+        if (scroll)
+        {
+            m_EditorCamera.Zoom(scroll);
+        }
         m_EditorCamera.Update(m_ViewportSize, m);
+    }
 
     // Mouse picking relate
     m_FrameBuffer->ClearEntitysAttachment();

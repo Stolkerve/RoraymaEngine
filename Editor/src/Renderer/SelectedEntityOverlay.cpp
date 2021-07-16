@@ -22,7 +22,7 @@ namespace rym
 				spriteTransform *= glm::scale(glm::mat4(1.f), { spriteWidth, spriteHeight, 0.f });
 			}
 			//Renderer2D::DrawSprite(&reSprite, spriteTransform, entity->ID);
-			Renderer2D::DrawWiredQuad(spriteTransform, reSprite.color, 21);
+			Renderer2D::DrawWiredQuad(spriteTransform, reSprite.color, 22);
 		}
 		Renderer2D::EndWire();
 		Renderer::SetLineWidth(1.0f);

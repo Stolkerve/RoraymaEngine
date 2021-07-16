@@ -27,7 +27,7 @@ namespace rym
 		static void EndWire();
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Color& color, int ID = -1);
-		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D>& texture, const Color& color, int ID = -1);
+		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
 		static void DrawQuad(const glm::mat4& transform, const Color& color);
 		static void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const Color& color);
 

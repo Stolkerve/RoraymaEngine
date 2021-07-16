@@ -45,14 +45,15 @@ namespace rym
 			glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 
 			glEnable(GL_DEPTH_TEST);
-			//glDepthFunc(GL_LESS);
+			glDepthFunc(GL_LESS);
 
 			// Stencil Test
 			//glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 			// Blending
 			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &RendererCaps->MaxTextureSize);
 			//RYM_CORE_INFO(RendererCaps->MaxTextureSize);

@@ -15,6 +15,7 @@ namespace rym
 		AssetsManager::PushShader("TextureShader", "assets/shaders/TextureShader.glsl");
 		uint32_t whiteTextureData = 0xffffffff;
 		AssetsManager::PushTexture("WhiteTexture", 1, 1, &whiteTextureData);
+		AssetsManager::PushTexture("CameraEditor", "assets/Textures/camera.png");
 
 		s_PolygonsBatching = new Polygons;
 		s_WirePolygonsBatching = new WirePolygons;
@@ -85,12 +86,12 @@ namespace rym
 		s_PolygonsBatching->DrawQuad(transform, color, ID);
 	}
 
-	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D>& texture, const Color& color, int ID)
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer, int ID)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 
-		s_PolygonsBatching->DrawQuad(transform, texture, color);
+		s_PolygonsBatching->DrawQuad(transform, texture, color, layer, ID);
 	}
 
 	void Renderer2D::DrawSprite(SpriteComponent* sprite, TransformComponent* transform, int ID)

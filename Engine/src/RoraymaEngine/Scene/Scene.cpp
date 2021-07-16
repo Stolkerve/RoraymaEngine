@@ -1,15 +1,18 @@
 #include "Scene.hh"
 
 #include "../Renderer/Renderer2D.hh"
+#include "../Scene/AssetsManager.hh"
 #include <sstream>
 
 namespace rym
 {
     constexpr uint32_t MAX_ENTITYS = 10000;
 
+    Camera2D s_StaticCamera;
     Scene::Scene(const std::string_view& name) :
         Name(name)
     {
+        s_StaticCamera.SetOrthoSize(500.f);
         for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
         {
             m_AvailableEntities.push(i);
@@ -19,6 +22,7 @@ namespace rym
     Scene::Scene() :
         Name("Unknow_Name")
     {
+        s_StaticCamera.SetOrthoSize(500.f);
         for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
         {
             m_AvailableEntities.push(i);
@@ -228,7 +232,7 @@ namespace rym
     void Scene::OnUpdateEditor(const EditorCamera& editorCamera)
     {
         Renderer2D::Begin(editorCamera);
-
+        Renderer2D::BeginWire(editorCamera);
 		for (auto& e : m_Entitys)
 		{
 			if (e->HaveComponent<PyScriptComponent>())
@@ -243,14 +247,6 @@ namespace rym
 
 		for (auto& e : m_Entitys)
 		{
-			//{
-			//	static CameraComponent* mainCamera = nullptr;s
-			//	if (camera->Current && mainCamera == nullptr)
-			//	{
-			//		mainCamera = camera;
-			//	}
-			//}
-
             if (e->HaveComponent<SpriteComponent>())
             {
                 auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
@@ -258,13 +254,24 @@ namespace rym
                 Renderer2D::DrawSprite(sprite, transform, e->ID);
             }
 
+            if (e->HaveComponent<CameraComponent>())
+            {
+                auto transform = e->GetComponent<TransformComponent>();
+                auto camera = e->GetComponent<CameraComponent>();
+                float camSize = std::clamp(editorCamera.GetZoomLevel() * 0.1f, 50.f, 500.f);
+                Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
+                float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
+                float top = camera->camera.GetOrthoSize() * 2.f;
+                Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::WHITE, 21);
+            }
         }
+
+        Renderer2D::EndWire();
         Renderer2D::End();
     }
 
 	void Scene::OnStartGame()
 	{
-        RYM_INFO("Comenzo la escena");
         for (auto& e : m_Entitys)
         {
             if (e->HaveComponent<PyScriptComponent>())
@@ -272,7 +279,6 @@ namespace rym
                 //m_ScriptingEntitys.insert(e);
             }
         }
-        RYM_INFO("Numero de entidades con script {}", m_ScriptingEntitys.size());
 	}
 
     void Scene::OnUpdateGame(float _delta)
@@ -364,7 +370,7 @@ namespace rym
         {
             if (e->HaveComponent<CameraComponent>())
             {
-                auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
+                auto camera = e->GetComponent<CameraComponent>();
                 camera->camera.Resize(m_Size.x / m_Size.y);
             }
         }

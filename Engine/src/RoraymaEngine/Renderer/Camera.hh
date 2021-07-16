@@ -56,6 +56,7 @@ namespace rym
 		void Update(glm::vec2 viewport, glm::vec2 mouseViewport);
 		float GetZoomLevel() const { return m_ZoomLevel; }
 		void Zoom(float zoom);
+		void SetOrtho(float size);
 		void Resize(float width, float height);
 		const float GetAspectRatio() const { return m_AspectRatio; }
 	private:

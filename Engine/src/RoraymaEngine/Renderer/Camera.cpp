@@ -78,12 +78,6 @@ namespace rym
 	{
 		m_Viewport = viewport;
 
-		float scroll = Input::GetMouseScrolled().y;
-		if (scroll)
-		{
-			Zoom(scroll);
-		}
-
 		m_FirstMouseViewport = glm::unProject(
 			glm::vec3(mouseViewport.x, viewport.y - mouseViewport.y, 1.f),
 			GetViewMatrix(),
@@ -143,6 +137,12 @@ namespace rym
 			//m_Position += glm::vec3(whatever.x, whatever.y, 0.f);
 		m_ZoomLevel += zoom * (m_ZoomLevel * 0.1111f);
 		m_ZoomLevel = std::max(m_ZoomLevel, MAX_ZOOM);
+	}
+
+	void EditorCamera::SetOrtho(float size)
+	{
+		m_ZoomLevel = size;
+		UpdateMatrix();
 	}
 
 	void EditorCamera::Resize(float width, float height)
