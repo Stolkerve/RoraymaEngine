@@ -10,7 +10,6 @@ namespace rym
 		if (entity->HaveComponent<SpriteComponent>())
 		{
 			auto spriteTransformCmp = *entity->GetComponent<TransformComponent>();
-			spriteTransformCmp.scale += glm::vec2(1.6f);
 			auto spriteTransform = spriteTransformCmp.GetTransform();
 			SpriteComponent reSprite = *entity->GetComponent<SpriteComponent>();
 			const auto& texture = AssetsManager::GetTexture(reSprite.texture);

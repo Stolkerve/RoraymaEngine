@@ -310,7 +310,7 @@ void EditorLayer::OnImGui()
         m_FoldersPanel.Render();
         //ConsolePanel::GetInstace()->Render();
         m_RenderingInfoPanel.Render();
-		CodeEditorPanel::Render();
+        CodeEditorPanel::Render();
     }
 
     {
@@ -318,31 +318,31 @@ void EditorLayer::OnImGui()
 
         // Scene
         auto sceneName = (m_Scenes.back()->Name + "###");
-        ImGui::Begin("Scenes");
-
+        m_ScenesOpen = ImGui::Begin("Scenes");
+        //6RYM_INFO(scenesOpen);
         ImGui::Spacing();
 
-		static bool isPlay = false;
+        static bool isPlay = false;
         if (ImGui::Button(ICON_FA_PLAY"  Play scene"))
         {
             m_LayerMode = LayerMode::GAME_MODE;
-			if (!isPlay)
-				m_Scenes.back()->OnStartGame();
-			isPlay = true;
+            if (!isPlay)
+                m_Scenes.back()->OnStartGame();
+            isPlay = true;
         }
         ImGui::SameLine();
-        if(ImGui::Button(ICON_FA_STOP"  Stop scene"))
+        if (ImGui::Button(ICON_FA_STOP"  Stop scene"))
         {
             m_LayerMode = LayerMode::EDITOR_MODE;
-			if(isPlay)
-				m_Scenes.back()->OnQuitGame();
-			isPlay = false;
+            if (isPlay)
+                m_Scenes.back()->OnQuitGame();
+            isPlay = false;
         }
-		ImGui::Separator();
+        ImGui::Separator();
 
-		static bool tap = true;
-		ImGui::BeginTabBar("ScenesBar");
-		ImGui::BeginTabItem(sceneName.c_str(), &tap);
+        static bool tap = true;
+        ImGui::BeginTabBar("ScenesBar");
+        ImGui::BeginTabItem(sceneName.c_str(), &tap);
         // Viewport
         m_ViewportPos = {
             // Global start point the window position and the tap bar offset
@@ -358,25 +358,25 @@ void EditorLayer::OnImGui()
         if (m_ViewportSize != viewportPanelSize)
         {
             m_EditorCamera.Resize(viewportPanelSize.x, viewportPanelSize.y);
-			m_Scenes.back()->OnViewportResize(uint32_t(viewportPanelSize.x), uint32_t(viewportPanelSize.y));
+            m_Scenes.back()->OnViewportResize(uint32_t(viewportPanelSize.x), uint32_t(viewportPanelSize.y));
             m_ViewportSize = viewportPanelSize;
-			m_NeedResize = true;
+            m_NeedResize = true;
         }
 
         uint32_t sceneTextID = m_FrameBuffer->GetColorAttachment();
         ImGui::Image((void*)sceneTextID, { m_ViewportSize.x, m_ViewportSize.y }, { 0, 1 }, { 1, 0 });
 
-		// gizmos
-		/*
-		{
-			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			//TODO: multiple the vertices by the viewmatrix of the editor camera
-			draw_list->AddRectFilled({ 100.f, 100.f }, { 200.f, 200.f }, ImColor({ 1.0f, 1.0f, 0.4f, 1.0f }));
-		}
-		*/
+        // gizmos
+        /*
+        {
+            ImDrawList* draw_list = ImGui::GetWindowDrawList();
+            //TODO: multiple the vertices by the viewmatrix of the editor camera
+            draw_list->AddRectFilled({ 100.f, 100.f }, { 200.f, 200.f }, ImColor({ 1.0f, 1.0f, 0.4f, 1.0f }));
+        }
+        */
 
-		ImGui::EndTabItem();
-		ImGui::EndTabBar();
+        ImGui::EndTabItem();
+        ImGui::EndTabBar();
 
         ImGui::End();
         ImGui::PopStyleVar();

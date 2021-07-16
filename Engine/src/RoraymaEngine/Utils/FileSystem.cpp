@@ -38,8 +38,8 @@ bool rym::FileSystem::Move(const std::filesystem::path& from, const std::filesys
 
 bool rym::FileSystem::Rename(const std::filesystem::path& oldN, const std::filesystem::path& newN) noexcept
 {
-	auto newName = (oldN.parent_path().string() + "/" + newN.filename().string());
-	int success = std::rename(oldN.string().c_str(), newName.c_str());
+	auto newName = (oldN.parent_path() / newN.filename());
+	int success = std::rename(oldN.string().c_str(), newName.string().c_str());
 	if (!success)
 	{
 		RYM_CRITICAL("{} was not renamed", oldN.filename().string());

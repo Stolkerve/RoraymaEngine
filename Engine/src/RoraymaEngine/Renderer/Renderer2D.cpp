@@ -12,6 +12,7 @@ namespace rym
 
 	void Renderer2D::Init()
 	{
+		AssetsManager::PushShader("TextureShader", "assets/shaders/TextureShader.glsl");
 		uint32_t whiteTextureData = 0xffffffff;
 		AssetsManager::PushTexture("WhiteTexture", 1, 1, &whiteTextureData);
 

@@ -264,10 +264,15 @@ namespace rym
 
 	void Scene::OnStartGame()
 	{
-		//RYM_INFO("Comenzo");
-		//m_RuntimeEntitys.reserve(m_Entitys.size());
-		//m_EntitysBackup.reserve(m_Entitys.capacity());
-		//m_EntitysBackup = m_Entitys;
+        RYM_INFO("Comenzo la escena");
+        for (auto& e : m_Entitys)
+        {
+            if (e->HaveComponent<PyScriptComponent>())
+            {
+                //m_ScriptingEntitys.insert(e);
+            }
+        }
+        RYM_INFO("Numero de entidades con script {}", m_ScriptingEntitys.size());
 	}
 
     void Scene::OnUpdateGame(float _delta)
@@ -278,8 +283,6 @@ namespace rym
             {
                 if (e->HaveComponent<PyScriptComponent>())
                 {
-                    m_ScriptingEntitys.insert(e);
-                    //RYM_INFO(m_ScriptingEntitys.size());
                     auto script = e->GetComponent<PyScriptComponent>();
 					if (script->ptr)
 					{
@@ -341,14 +344,15 @@ namespace rym
 	{
 		/* Its a temporal solution, later I will create a backupsystem when the scene is on game mode*/
 		//RYM_INFO("Salio");
-		//for (size_t i = 0; i < m_Entitys.size(); i++)
-		//{
-		//	for (size_t e = 0; e < m_EntitysBackup.size(); e++)
-		//	{
-		//		if (m_Entitys[i]->ID == m_EntitysBackup[e]->ID)
-		//			m_Entitys[i] = std::move(m_EntitysBackup[e]);
-		//	}
-		//}
+		for (size_t i = 0; i < m_Entitys.size(); i++)
+		{
+            /*
+            for (auto e : m_ScriptingEntitys) {
+                if (m_Entitys[i]->ID == e->ID)
+                    m_Entitys[i] = std::move(e);
+            }
+            */
+		}
 		//m_Entitys = std::move(m_EntitysBackup);
 	}
 

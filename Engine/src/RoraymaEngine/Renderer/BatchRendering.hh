@@ -8,6 +8,7 @@
 #include "Color.hh"
 #include "ShaderProgram.hh"
 #include "Texture.hh"
+#include "UniformBuffer.hh"
 
 namespace rym
 {
@@ -34,6 +35,8 @@ namespace rym
 
 			void reset();
 		};
+
+
 
 		class Polygons
 		{

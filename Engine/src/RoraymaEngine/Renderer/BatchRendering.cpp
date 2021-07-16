@@ -47,8 +47,8 @@ namespace rym
 			std::iota(samplers.begin(), samplers.end(), 0);
 
 			// Load shader
-			AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
-			m_TextureShader = AssetsManager::GetShader("EditorShader");
+			//AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
+			m_TextureShader = AssetsManager::GetShader("TextureShader");
 			m_TextureShader->Bind();
 			m_TextureShader->SetUniformIntArray("u_Textures", samplers.data(), m_MaxTextureSlots);
 
@@ -361,8 +361,8 @@ namespace rym
 			std::iota(samplers.begin(), samplers.end(), 0);
 
 			// Load shader
-			AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
-			m_TextureShader = AssetsManager::GetShader("EditorShader");
+			//AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
+			m_TextureShader = AssetsManager::GetShader("TextureShader");
 			m_TextureShader->Bind();
 			m_TextureShader->SetUniformIntArray("u_Textures", samplers.data(), m_MaxTextureSlots);
 		}

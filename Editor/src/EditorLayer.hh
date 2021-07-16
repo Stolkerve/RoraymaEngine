@@ -66,4 +66,5 @@ private:
 	bool m_ViewportHovered;
 	bool m_ViewportDocked;
 	bool m_NeedResize;
+	bool m_ScenesOpen = true;
 };

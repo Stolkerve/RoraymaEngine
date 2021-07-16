@@ -84,8 +84,6 @@ namespace rym
 
 	FoldersPanel::FoldersPanel()
 	{
-		//RYM_INFO(std::filesystem::current_path().native());
-		RYM_INFO(std::filesystem::current_path().relative_path().string());
 		// Init extencions map
 		m_Extencions[".rym"] = Extencions::rym;
 
@@ -337,9 +335,9 @@ namespace rym
 					if(v)
 						RYM_INFO(std::string(v));
 					//m_EntitySelected->Tag = std::string(buffer);
-					auto newName = (lastHovered->Data.Path.parent_path().string() + "\\" + std::string(buffer));
+					auto newName = (lastHovered->Data.Path.parent_path() / buffer);
 					bool renameSucces = std::rename(lastHovered->Data.Path.string().c_str(),
-						newName.c_str());
+						newName.string().c_str());
 					lastHovered->Data.Path = newName;
 					ImGui::CloseCurrentPopup();
 				}
