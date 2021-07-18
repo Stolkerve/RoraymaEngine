@@ -71,7 +71,7 @@ namespace rym
 				if (isAnyCircleSelected)
 				{
 					blockSelectedEntity = true;
-
+					 
 				}
 			}
 			//RYM_INFO(top);
