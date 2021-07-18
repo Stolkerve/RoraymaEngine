@@ -34,7 +34,7 @@ namespace rym
 		static void DrawSprite(SpriteComponent* sprite, TransformComponent* transform, int ID = -1);
 		//static void DrawSprite(SpriteComponent* sprite, glm::mat4& transform, int ID = -1);
 
-		static void DrawCircle(const glm::vec2& position, const glm::vec2& size, const Color& color);
+		static void DrawCircle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer = 0, int ID = -1);
 		static void DrawTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color);
 		static void DrawRectTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color);
 		static void DrawPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color);

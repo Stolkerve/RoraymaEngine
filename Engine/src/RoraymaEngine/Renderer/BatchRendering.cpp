@@ -156,7 +156,7 @@ namespace rym
 
 		static std::mutex myMutex;
 
-		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int ID)
+		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
 			size_t vertexCount = m_CircleVertices.size();
 			constexpr float textureIndex = 0.0f; // White Texture
@@ -170,7 +170,7 @@ namespace rym
 				m_VertexBufferPtr->Color = color.GetColor();
 				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
 				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = 0.f;
+				m_VertexBufferPtr->Layer = float(layer);
 				m_VertexBufferPtr->EntityID = ID;
 				m_VertexBufferPtr++;
 			}

@@ -72,10 +72,13 @@ glm::vec2 EditorLayer::CaculateMouseViewport()
 
 void EditorLayer::MoveEntity(const std::shared_ptr<Entity>& entity, float delta)
 {
-    if (entity->HaveComponent<TransformComponent>())
+    if (!m_BlockSelectedEntity)
     {
-        const auto transformComp = entity->GetComponent<TransformComponent>();
-        transformComp->translation += glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
+        if (entity->HaveComponent<TransformComponent>())
+        {
+            const auto transformComp = entity->GetComponent<TransformComponent>();
+            transformComp->translation += glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
+        }
     }
 
 }
@@ -152,7 +155,7 @@ void EditorLayer::UpdateEditorMode(float _delta)
 
 	if (canDrawOverlay)
 	{
-		m_SEOVerlay.DrawOverlay(entityPtrSelected, m_EditorCamera);
+		m_SEOVerlay.DrawOverlay(entityPtrSelected, m_EditorCamera, m_BlockSelectedEntity);
 	}
     if (m.x > 0 && m.x < m_ViewportSize.x && m.y > 0 && m.y < m_ViewportSize.y &&
         m_ViewportFocused)

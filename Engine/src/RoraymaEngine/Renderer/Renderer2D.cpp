@@ -150,11 +150,11 @@ namespace rym
 		s_PolygonsBatching->DrawQuad(transform, texture, color);
 	}
 
-	void Renderer2D::DrawCircle(const glm::vec2& position, const glm::vec2& size, const Color& color)
+	void Renderer2D::DrawCircle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer, int ID)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		s_PolygonsBatching->DrawCircle(transform, color);
+		s_PolygonsBatching->DrawCircle(transform, color, layer, ID);
 	}
 
 	void Renderer2D::DrawTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color)

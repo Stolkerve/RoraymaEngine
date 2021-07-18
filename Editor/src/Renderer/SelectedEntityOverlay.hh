@@ -8,6 +8,6 @@ namespace rym
 	class SEOverlay
 	{
 	public:
-		static void DrawOverlay(const std::shared_ptr<Entity>& entity, const EditorCamera& editorCamera);
+		static void DrawOverlay(const std::shared_ptr<Entity>& entity, const EditorCamera& editorCamera, bool& blockSelectedEntity);
 	};
 }

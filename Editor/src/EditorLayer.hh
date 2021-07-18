@@ -67,4 +67,5 @@ private:
 	bool m_ViewportDocked;
 	bool m_NeedResize;
 	bool m_ScenesOpen = true;
+	bool m_BlockSelectedEntity = false;
 };
