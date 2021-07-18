@@ -6,93 +6,93 @@
 
 namespace rym
 {
-    constexpr uint32_t MAX_ENTITYS = 10000;
+	constexpr uint32_t MAX_ENTITYS = 10000;
 
-    Camera2D s_StaticCamera;
-    Scene::Scene(const std::string_view& name) :
-        Name(name)
-    {
-        s_StaticCamera.SetOrthoSize(500.f);
-        for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
-        {
-            m_AvailableEntities.push(i);
-        }
-    }
+	Camera2D s_StaticCamera;
+	Scene::Scene(const std::string_view& name) :
+		Name(name)
+	{
+		s_StaticCamera.SetOrthoSize(500.f);
+		for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
+		{
+			m_AvailableEntities.push(i);
+		}
+	}
 
-    Scene::Scene() :
-        Name("Unknow_Name")
-    {
-        s_StaticCamera.SetOrthoSize(500.f);
-        for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
-        {
-            m_AvailableEntities.push(i);
-        }
-    }
+	Scene::Scene() :
+		Name("Unknow_Name")
+	{
+		s_StaticCamera.SetOrthoSize(500.f);
+		for (uint32_t i = 0; i < MAX_ENTITYS; ++i)
+		{
+			m_AvailableEntities.push(i);
+		}
+	}
 
-    Scene::~Scene()
-    {
+	Scene::~Scene()
+	{
 		RYM_INFO("Scene destructor is called");
-    }
+	}
 
-    std::string Scene::CheckEntitysName(const std::string_view& name)
-    {
+	std::string Scene::CheckEntitysName(const std::string_view& name)
+	{
 /*
-        auto recurSearche = [&]() {
-            auto it = std::search()
-        };
+		auto recurSearche = [&]() {
+			auto it = std::search()
+		};
 
-        auto it = std::find_if(m_Entitys.begin(), m_Entitys.end(), [&name](Entity* e) {
-            return e->Tag == name;
-            });
+		auto it = std::find_if(m_Entitys.begin(), m_Entitys.end(), [&name](Entity* e) {
+			return e->Tag == name;
+			});
 
-        if (it != m_Entitys.end())
-            auto a = *it;
+		if (it != m_Entitys.end())
+			auto a = *it;
 
-        return std::string(name);
+		return std::string(name);
 */
-        //auto NumOfCopias = [](uint32_t value) {
-        //    std::stringstream ss;
-        //    ss << "_" << value;
-        //    return ss.str();
-        //};
+		//auto NumOfCopias = [](uint32_t value) {
+		//    std::stringstream ss;
+		//    ss << "_" << value;
+		//    return ss.str();
+		//};
 
-        //uint32_t counter = 0;
+		//uint32_t counter = 0;
 
-        //for (auto& e : m_Entitys)
-        //{
-        //    if (e->Tag == name.data() || (std::string(name) + NumOfCopias(counter)) == e->Tag)
-        //        counter++;
-        //}
+		//for (auto& e : m_Entitys)
+		//{
+		//    if (e->Tag == name.data() || (std::string(name) + NumOfCopias(counter)) == e->Tag)
+		//        counter++;
+		//}
 
-        //if (counter)
-        //    return std::string(name) + NumOfCopias(counter);
-        return std::string(name);
-    }
+		//if (counter)
+		//    return std::string(name) + NumOfCopias(counter);
+		return std::string(name);
+	}
 
-    std::shared_ptr<Entity> Scene::CreateEmptyEntity(const std::string_view& name)
-    {
-        auto ptr = std::make_shared<Entity>();
-        ptr->Tag = CheckEntitysName(name);
+	std::shared_ptr<Entity> Scene::CreateEmptyEntity(const std::string_view& name)
+	{
+		auto ptr = std::make_shared<Entity>();
+		ptr->Tag = CheckEntitysName(name);
 
-        ptr->ID = m_AvailableEntities.front();
-        m_AvailableEntities.pop();
+		ptr->ID = m_AvailableEntities.front();
+		m_AvailableEntities.pop();
 
-        return ptr;
-    }
+		return ptr;
+	}
 
-    void Scene::CreateEntity(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
-    {
-        auto ptr = CreateEmptyEntity(name);
-        retrivedEntity = ptr;
+	void Scene::CreateEntity(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	{
+		auto ptr = CreateEmptyEntity(name);
+		retrivedEntity = ptr;
 
-        std::string line = "Entity ";
-        line += ptr->Tag;
-        line += " Created";
+		std::string line = "Entity ";
+		line += ptr->Tag;
+		line += " Created";
 
-        ptr->AddComponent<TransformComponent>();
+		ptr->AddComponent<TransformComponent>();
 
-        m_Entitys.push_back(ptr);
-    }
+		m_Entitys.push_back(ptr);
+	}
 
 	void Scene::CreateEntity(const std::string_view& name)
 	{
@@ -134,20 +134,20 @@ namespace rym
 		m_Entitys.insert(m_Entitys.begin() + where, ptr);
 	}
 
-    void Scene::CreateSprite(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
-    {
-        auto ptr = CreateEmptyEntity(name);
-        retrivedEntity = ptr;
+	void Scene::CreateSprite(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	{
+		auto ptr = CreateEmptyEntity(name);
+		retrivedEntity = ptr;
 
-        std::string line = "Sprite ";
-        line += ptr->Tag;
-        line += " Created";
+		std::string line = "Sprite ";
+		line += ptr->Tag;
+		line += " Created";
 
-        ptr->AddComponent<TransformComponent>();
-        ptr->AddComponent<SpriteComponent>(Color::WHITE);
+		ptr->AddComponent<TransformComponent>();
+		ptr->AddComponent<SpriteComponent>(Color::WHITE);
 
-        m_Entitys.push_back(ptr);
-    }
+		m_Entitys.push_back(ptr);
+	}
 
 	void Scene::CreateSprite(const std::string_view& name)
 	{
@@ -163,20 +163,20 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-    void Scene::CreateCamera(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
-    {
-        auto ptr = CreateEmptyEntity(name);
-        retrivedEntity = ptr;
+	void Scene::CreateCamera(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	{
+		auto ptr = CreateEmptyEntity(name);
+		retrivedEntity = ptr;
 
-        std::string line = "Camera ";
-        line += ptr->Tag;
-        line += " Created";
+		std::string line = "Camera ";
+		line += ptr->Tag;
+		line += " Created";
 
-        ptr->AddComponent<TransformComponent>();
-        ptr->AddComponent<CameraComponent>(m_Size.x / m_Size.y);
+		ptr->AddComponent<TransformComponent>();
+		ptr->AddComponent<CameraComponent>(m_Size.x / m_Size.y);
 
-        m_Entitys.push_back(ptr);
-    }
+		m_Entitys.push_back(ptr);
+	}
 
 	void Scene::CreateCamera(const std::string_view& name)
 	{
@@ -192,49 +192,58 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-    void Scene::DeleteEntity(const std::string_view& name)
-    {
-        std::string line = "Entity ";
-        line += name;
-        line += " deleted";
+	void Scene::DeleteEntity(const std::string_view& name)
+	{
+		std::string line = "Entity ";
+		line += name;
+		line += " deleted";
 
-        size_t i = 0;
-        for (auto& e : m_Entitys)
-        {
-            if (e->Tag == name)
-            {
-                // Recover the ID back to the queue
-                m_AvailableEntities.push(e->ID);
-
-                m_Entitys.erase(m_Entitys.begin() + i);
-				return;
-            }
-            i++;
-        }
-    }
-
-    std::shared_ptr<Entity> Scene::GetEntity(const std::string_view& name)
-    {
-        for (auto& e : m_Entitys)
-            if (e->Tag == name)
-                return e;
-        RYM_CORE_ASSERT(false, "The scene cannot get entity " + std::string(name));
-    }
-
-	std::shared_ptr<Entity> Scene::GetEntity(uint32_t ID)
-    {
-        for (auto& e : m_Entitys)
-            if (e->ID == ID)
-                return e;
-        RYM_CORE_ASSERT(false, "The scene cannot get entity ");
-    }
-
-    void Scene::OnUpdateEditor(const EditorCamera& editorCamera)
-    {
-        Renderer2D::Begin(editorCamera);
-        Renderer2D::BeginWire(editorCamera);
+		size_t i = 0;
 		for (auto& e : m_Entitys)
 		{
+			if (e->Tag == name)
+			{
+				// Recover the ID back to the queue
+				m_AvailableEntities.push(e->ID);
+
+				m_Entitys.erase(m_Entitys.begin() + i);
+				return;
+			}
+			i++;
+		}
+	}
+
+	std::shared_ptr<Entity> Scene::GetEntity(const std::string_view& name)
+	{
+		for (auto& e : m_Entitys)
+			if (e->Tag == name)
+				return e;
+		RYM_CORE_ASSERT(false, "The scene cannot get entity " + std::string(name));
+		return nullptr;
+	}
+
+	std::shared_ptr<Entity> Scene::GetEntity(uint32_t ID)
+	{
+		for (auto& e : m_Entitys)
+			if (e->ID == ID)
+				return e;
+		RYM_CORE_ASSERT(false, "The scene cannot get entity ");
+		return nullptr;
+	}
+
+	void Scene::OnUpdateEditor(const EditorCamera& editorCamera)
+	{
+		Renderer2D::Begin(editorCamera);
+		Renderer2D::BeginWire(editorCamera);
+		float camSize = std::clamp(editorCamera.GetZoomLevel() * 0.1f, 50.f, 500.f);
+		for (auto& e : m_Entitys)
+		{
+			if (e->NumOfComponents() == 1)
+			{
+				auto transform = e->GetComponent<TransformComponent>();
+				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("GhostEditor"), Color::WHITE, 21, e->ID);
+			}
+
 			if (e->HaveComponent<PyScriptComponent>())
 			{
 				auto script = e->GetComponent<PyScriptComponent>();
@@ -243,108 +252,162 @@ namespace rym
 					script->start = false;
 				}
 			}
+
+			if (e->HaveComponent<SpriteComponent>())
+			{
+				auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
+				// Only in the editor, when a sprite have a texture, the y axis invert because yes.
+				Renderer2D::DrawSprite(sprite, transform, e->ID);
+			}
+
+			if (e->HaveComponent<CameraComponent>())
+			{
+				auto transform = e->GetComponent<TransformComponent>();
+				auto camera = e->GetComponent<CameraComponent>();
+				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
+				float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
+				float top = camera->camera.GetOrthoSize() * 2.f;
+				Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::WHITE, 21);
+			}
+		}
+
+		Renderer2D::EndWire();
+		Renderer2D::End();
+	}
+
+	void Scene::OnStartGame()
+	{
+		for (auto& e : m_Entitys)
+		{
+			if (e->HaveComponent<PyScriptComponent>())
+			{
+				//m_ScriptingEntitys.insert(e);
+			}
+		}
+	}
+
+	void Scene::OnUpdateGame(float _delta)
+	{
+	#if 0
+		/***************************Scripting**********************************/
+		for (auto& e : m_Entitys)
+		{
+			if (e->HaveComponent<PyScriptComponent>())
+			{
+				auto script = e->GetComponent<PyScriptComponent>();
+				if (script->ptr)
+				{
+					if (!script->start)
+					{
+						script->ptr->m_Entity = e;
+						script->ptr->Reload();
+						script->ptr->OnStart();
+						script->start = true;
+					}
+
+					script->ptr->OnUpdate(_delta);
+				}
+			}
+		}
+
+		/***************************Rendering**********************************/
+		Camera* mainCamera = nullptr;
+		TransformComponent* mainCameraTransform = nullptr;
+
+		// Looking for the current cameras (Camera2D)
+		{
+			for (auto& e : m_Entitys)
+			{
+				if (e->HaveComponent<CameraComponent>())
+				{
+					auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
+					//static CameraComponent* previusCamera = nullptr;
+					// Get the first current camera
+					if (e->visible && camera->current)
+					{
+						mainCamera = &camera->camera;
+						mainCameraTransform = transform;
+						break;
+					}
+				}
+			}
+		}
+
+		// play the game
+		if (mainCamera)
+		{
+			Renderer2D::Begin(*mainCamera, *mainCameraTransform);
+			for (auto& e : m_Entitys)
+			{
+				if (e->visible && e->HaveComponent<SpriteComponent>())
+				{
+					auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
+					Renderer2D::DrawSprite(sprite, transform);
+				}
+			}
+			Renderer2D::End();
+		}
+	#endif
+		Camera* mainCamera = nullptr;
+		TransformComponent* mainCameraTransform = nullptr;
+		// Looking for the current cameras (Camera2D)
+		{
+			for (auto& e : m_Entitys)
+			{
+				if (e->HaveComponent<CameraComponent>())
+				{
+					auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
+					//static CameraComponent* previusCamera = nullptr;
+					// Get the first current camera
+					if (e->visible && camera->current)
+					{
+						mainCamera = &camera->camera;
+						mainCameraTransform = transform;
+						break;
+					}
+				}
+			}
+		}
+
+		if (mainCamera)
+		{
+			Renderer2D::Begin(*mainCamera, *mainCameraTransform);
 		}
 
 		for (auto& e : m_Entitys)
 		{
-            if (e->HaveComponent<SpriteComponent>())
-            {
-                auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
-                // Only in the editor, when a sprite have a texture, the y axis invert because yes.
-                Renderer2D::DrawSprite(sprite, transform, e->ID);
-            }
-
-            if (e->HaveComponent<CameraComponent>())
-            {
-                auto transform = e->GetComponent<TransformComponent>();
-                auto camera = e->GetComponent<CameraComponent>();
-                float camSize = std::clamp(editorCamera.GetZoomLevel() * 0.1f, 50.f, 500.f);
-                Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
-                float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
-                float top = camera->camera.GetOrthoSize() * 2.f;
-                Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::WHITE, 21);
-            }
-        }
-
-        Renderer2D::EndWire();
-        Renderer2D::End();
-    }
-
-	void Scene::OnStartGame()
-	{
-        for (auto& e : m_Entitys)
-        {
-            if (e->HaveComponent<PyScriptComponent>())
-            {
-                //m_ScriptingEntitys.insert(e);
-            }
-        }
-	}
-
-    void Scene::OnUpdateGame(float _delta)
-    {
-        /***************************Scripting**********************************/
-        {
-            for (auto& e : m_Entitys)
-            {
-                if (e->HaveComponent<PyScriptComponent>())
-                {
-                    auto script = e->GetComponent<PyScriptComponent>();
-					if (script->ptr)
+			if (e->HaveComponent<PyScriptComponent>())
+			{
+				auto script = e->GetComponent<PyScriptComponent>();
+				if (script->ptr)
+				{
+					if (!script->start)
 					{
-						if (!script->start)
-						{
-							script->ptr->m_Entity = e;
-							script->ptr->Reload();
-							script->ptr->OnStart();
-							script->start = true;
-						}
-
-						script->ptr->OnUpdate(_delta);
+						script->ptr->m_Entity = e;
+						script->ptr->Reload();
+						script->ptr->OnStart();
+						script->start = true;
 					}
-                }
-            }
-        }
 
-        /***************************Rendering**********************************/
-        Camera* mainCamera = nullptr;
-        TransformComponent* mainCameraTransform = nullptr;
+					script->ptr->OnUpdate(_delta);
+				}
+			}
 
-        // Looking for the current cameras (Camera2D)
-        {
-            for (auto& e : m_Entitys)
-            {
-                if (e->HaveComponent<CameraComponent>())
-                {
-                    auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
-                    //static CameraComponent* previusCamera = nullptr;
-                    // Get the first current camera
-                    if (e->visible && camera->current)
-                    {
-                        mainCamera = &camera->camera;
-                        mainCameraTransform = transform;
-                        break;
-                    }
-                }
-            }
-        }
+			if (mainCamera)
+			{
+				if (e->visible && e->HaveComponent<SpriteComponent>())
+				{
+					auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
+					Renderer2D::DrawSprite(sprite, transform);
+				}
+			}
+		}
 
-        // play the game
-        if (mainCamera)
-        {
-            Renderer2D::Begin(*mainCamera, *mainCameraTransform);
-            for (auto& e : m_Entitys)
-            {
-                if (e->visible && e->HaveComponent<SpriteComponent>())
-                {
-                    auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
-                    Renderer2D::DrawSprite(sprite, transform);
-                }
-            }
-            Renderer2D::End();
-        }
-        /**********************************************************************/
-    }
+		if (mainCamera)
+		{
+			Renderer2D::End();
+		}
+	}
 
 	void Scene::OnQuitGame()
 	{
@@ -352,27 +415,27 @@ namespace rym
 		//RYM_INFO("Salio");
 		for (size_t i = 0; i < m_Entitys.size(); i++)
 		{
-            /*
-            for (auto e : m_ScriptingEntitys) {
-                if (m_Entitys[i]->ID == e->ID)
-                    m_Entitys[i] = std::move(e);
-            }
-            */
+			/*
+			for (auto e : m_ScriptingEntitys) {
+				if (m_Entitys[i]->ID == e->ID)
+					m_Entitys[i] = std::move(e);
+			}
+			*/
 		}
 		//m_Entitys = std::move(m_EntitysBackup);
 	}
 
-    void Scene::OnViewportResize(uint32_t width, uint32_t height)
-    {
-        m_Size = glm::fvec2{ width, height };
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	{
+		m_Size = glm::fvec2{ width, height };
 
-        for (auto& e : m_Entitys)
-        {
-            if (e->HaveComponent<CameraComponent>())
-            {
-                auto camera = e->GetComponent<CameraComponent>();
-                camera->camera.Resize(m_Size.x / m_Size.y);
-            }
-        }
-    }
+		for (auto& e : m_Entitys)
+		{
+			if (e->HaveComponent<CameraComponent>())
+			{
+				auto camera = e->GetComponent<CameraComponent>();
+				camera->camera.Resize(m_Size.x / m_Size.y);
+			}
+		}
+	}
 }

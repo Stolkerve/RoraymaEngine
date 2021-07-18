@@ -52,8 +52,8 @@ namespace rym
 
 			// Blending
 			glEnable(GL_BLEND);
-			glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-			//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			//glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			glGetIntegerv(GL_MAX_TEXTURE_SIZE, &RendererCaps->MaxTextureSize);
 			//RYM_CORE_INFO(RendererCaps->MaxTextureSize);

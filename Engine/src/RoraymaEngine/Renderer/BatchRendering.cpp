@@ -158,7 +158,7 @@ namespace rym
 
 		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int ID)
 		{
-			uint32_t vertexCount = m_CircleVertices.size();
+			size_t vertexCount = m_CircleVertices.size();
 			constexpr float textureIndex = 0.0f; // White Texture
 
 			if (m_VerticesCount + vertexCount >= m_MaxVertices)
@@ -201,13 +201,13 @@ namespace rym
 			std::vector<glm::vec2> result; // TODO: reserve space
 			Triangulate::Process(vertices, result);
 
-			uint32_t vertexCount = result.size();
+			size_t vertexCount = result.size();
 			constexpr float textureIndex = 0.0f; // White Texture
 
 			if (m_VerticesCount + vertexCount >= m_MaxVertices)
 				NextBatch();
 
-			for (uint32_t i = 0; i < vertexCount; i++)
+			for (size_t i = 0; i < vertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * glm::vec4(result[i], 0.f, 1.f);
 				m_VertexBufferPtr->Color = color.GetColor();
@@ -236,13 +236,13 @@ namespace rym
 			}
 
 
-			uint32_t vertexCount = result.size();
+			size_t vertexCount = result.size();
 			constexpr float textureIndex = 0.0f; // White Texture
 
 			if (m_VerticesCount + vertexCount >= m_MaxVertices)
 				NextBatch();
 
-			for (uint32_t i = 0; i < vertexCount; i++)
+			for (size_t i = 0; i < vertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * glm::vec4(s_Meshes[name][i], 0.f, 1.f);
 				m_VertexBufferPtr->Color = color.GetColor();
@@ -264,7 +264,7 @@ namespace rym
 			if (m_VerticesCount >= m_MaxVertices)
 				NextBatch();
 
-			for (uint32_t i = 0; i < m_TriangleVertexCount; i++)
+			for (size_t i = 0; i < m_TriangleVertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * m_TriangleVertices[i];
 				m_VertexBufferPtr->Color = color.GetColor();
@@ -286,7 +286,7 @@ namespace rym
 			if (m_VerticesCount >= m_MaxVertices)
 				NextBatch();
 
-			for (uint32_t i = 0; i < m_TriangleVertexCount; i++)
+			for (size_t i = 0; i < m_TriangleVertexCount; i++)
 			{
 				m_VertexBufferPtr->Position = transform * m_RectTriangleVertices[i];
 				m_VertexBufferPtr->Color = color.GetColor();
@@ -424,71 +424,15 @@ namespace rym
 
 		void WirePolygons::DrawQuad(const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
-			uint32_t vertexCount = 5;
-			constexpr float textureIndex = 0.0f; // White Texture
+			const auto l1 = transform * glm::vec4(-0.5f,-0.5f, 0.f, 1.f);
+			const auto l2 = transform * glm::vec4( 0.5f,-0.5f, 0.f, 1.f);
+			const auto l3 = transform * glm::vec4( 0.5f, 0.5f, 0.f, 1.f);
+			const auto l4 = transform * glm::vec4(-0.5f, 0.5f, 0.f, 1.f);
 
-			if (m_VerticesCount >= m_MaxVertices)
-				NextBatch();
-
-			for (uint32_t i = 0; i < vertexCount; i++)
-			{
-				m_VertexBufferPtr->Position = transform * QuadVertexPositions[i];
-				m_VertexBufferPtr->Color = color.GetColor();
-				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
-				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = float(layer);
-				m_VertexBufferPtr->EntityID = ID;
-				m_VertexBufferPtr++;
-			}
-
-			m_VerticesCount += vertexCount;
-			BatchStatistics::Get().NumOfVertices += vertexCount;
-		}
-
-		void WirePolygons::DrawTriangle(const glm::mat4& transform, const Color& color, int layer, int ID)
-		{
-			uint32_t vertexCount = 4;
-			constexpr float textureIndex = 0.0f; // White Texture
-
-			if (m_VerticesCount >= m_MaxVertices)
-				NextBatch();
-
-			for (uint32_t i = 0; i < vertexCount; i++)
-			{
-				m_VertexBufferPtr->Position = transform * m_TriangleVertices[i];
-				m_VertexBufferPtr->Color = color.GetColor();
-				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
-				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = float(layer);
-				m_VertexBufferPtr->EntityID = ID;
-				m_VertexBufferPtr++;
-			}
-
-			m_VerticesCount += vertexCount;
-			BatchStatistics::Get().NumOfVertices += vertexCount;
-		}
-
-		void WirePolygons::DrawRectTriangle(const glm::mat4& transform, const Color& color, int layer, int ID)
-		{
-			uint32_t vertexCount = 4;
-			constexpr float textureIndex = 0.0f; // White Texture
-
-			if (m_VerticesCount >= m_MaxVertices)
-				NextBatch();
-
-			for (uint32_t i = 0; i < vertexCount; i++)
-			{
-				m_VertexBufferPtr->Position = transform * m_RectTriangleVertices[i];
-				m_VertexBufferPtr->Color = color.GetColor();
-				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
-				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = float(layer);
-				m_VertexBufferPtr->EntityID = ID;
-				m_VertexBufferPtr++;
-			}
-
-			m_VerticesCount += vertexCount;
-			BatchStatistics::Get().NumOfVertices += vertexCount;
+			DrawLine({ {l1}, {l2} }, color, layer, ID);
+			DrawLine({ {l2}, {l3} }, color, layer, ID);
+			DrawLine({ {l3}, {l4} }, color, layer, ID);
+			DrawLine({ {l4}, {l1} }, color, layer, ID);
 		}
 
 		void WirePolygons::Flush()
@@ -502,7 +446,7 @@ namespace rym
 			// Bind texture
 			AssetsManager::GetTexture("WhiteTexture")->Bind(0);
 
-			Renderer::DrawArrays(m_VertexArray, 0, m_VerticesCount, 0x0002);
+			Renderer::DrawArrays(m_VertexArray, 0, m_VerticesCount, 0x0001);
 			BatchStatistics::Get().DrawCalls++;
 		}
 

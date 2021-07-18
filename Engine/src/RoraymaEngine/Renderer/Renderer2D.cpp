@@ -16,6 +16,7 @@ namespace rym
 		uint32_t whiteTextureData = 0xffffffff;
 		AssetsManager::PushTexture("WhiteTexture", 1, 1, &whiteTextureData);
 		AssetsManager::PushTexture("CameraEditor", "assets/Textures/camera.png");
+		AssetsManager::PushTexture("GhostEditor", "assets/Textures/ghost.png");
 
 		s_PolygonsBatching = new Polygons;
 		s_WirePolygonsBatching = new WirePolygons;
@@ -173,6 +174,7 @@ namespace rym
 
 	void Renderer2D::DrawWiredQuad(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer)
 	{
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
 		s_WirePolygonsBatching->DrawQuad(transform, color, layer);

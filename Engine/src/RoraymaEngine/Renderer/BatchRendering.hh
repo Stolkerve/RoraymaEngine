@@ -130,9 +130,7 @@ namespace rym
 
 			void Draw(const std::vector<glm::vec2>& positions, const glm::mat4& transform, const Color& color, int ID = -1);
 			void DrawLine(const std::pair<glm::vec2, glm::vec2>& positions, const Color& color, int layer = 0, int ID = -1);
-			void DrawTriangle(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawQuad(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
-			void DrawRectTriangle(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void Flush();
 			void NextBatch();
 			void Begin(const glm::mat4& viewProjectionMatrix);
@@ -148,28 +146,6 @@ namespace rym
 			uint32_t m_VerticesCount = 0;
 			Vertex* m_VertexBufferAddress = nullptr; // This is the first position of the vertex buffer
 			Vertex* m_VertexBufferPtr = nullptr; // this point to the last element added to the vertex buffer, IS NOT THE END OF THE BUFFER
-
-			const glm::vec4 m_TriangleVertices[4] = {
-				{-0.5f, -0.5f, 0.f, 1.f}, // 0
-				{ 0.5f, -0.5f, 0.f, 1.f}, // 1
-				{ 0.0f,  0.5f, 0.f, 1.f}, // 2
-				{-0.5f, -0.5f, 0.f, 1.f}, // 0
-			};
-
-			const glm::vec4 m_RectTriangleVertices[4] = {
-				{-0.5f, -0.5f, 0.f, 1.f}, // 0
-				{ 0.5f, -0.5f, 0.f, 1.f}, // 1
-				{-0.5f,  0.5f, 0.f, 1.f}, // 2
-				{-0.5f, -0.5f, 0.f, 1.f}, // 0
-			};
-
-			const glm::vec4 QuadVertexPositions[5] = {
-				{-0.5f,-0.5f, 0.0f, 1.0f }, // 0
-				{ 0.5f,-0.5f, 0.0f, 1.0f }, // 1
-				{ 0.5f, 0.5f, 0.0f, 1.0f }, // 2
-				{-0.5f, 0.5f, 0.0f, 1.0f }, // 3
-				{-0.5f,-0.5f, 0.0f, 1.0f }, // 0
-			};
 
 			const glm::vec2 m_QuadTextureCoords[4] = {
 				{ 0.0f, 0.0f },

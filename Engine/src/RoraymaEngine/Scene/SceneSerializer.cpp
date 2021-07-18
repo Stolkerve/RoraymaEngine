@@ -225,5 +225,7 @@ namespace rym
 				}
 			}
 		}
+
+		return true;
 	}
 }

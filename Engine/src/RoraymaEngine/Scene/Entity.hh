@@ -62,6 +62,11 @@ namespace rym
 			return true;
 		}
 
+		size_t NumOfComponents()
+		{
+			return m_Components.size();
+		}
+
 		~Entity()
 		{
 			for (auto& [first, secount] : m_Components)
