@@ -58,7 +58,7 @@ namespace rym
 		int action = glfwGetMouseButton(App::GetInstance().GetWindow()->GetContextWindow(), (int)button);
 		return !action;
 	}
-
+	
 	bool Input::IsButtonJustPressed(MouseCode button)
 	{
 		int action = glfwGetMouseButton(App::GetInstance().GetWindow()->GetContextWindow(), (int)button);
@@ -127,6 +127,11 @@ namespace rym
 	{
 		//glfwSetInputMode(App::GetInstance().GetWindow()->GetContextWindow(), GLFW_CURSOR, (int)mode);
 		glfwSetCursorPos(App::GetInstance().GetWindow()->GetContextWindow(), v.x, v.y);
+	}
+
+	void Input::SetMouseJustPressed(bool action)
+	{
+		s_MouseData.mouseOnce = action;
 	}
 
 	void Input::SetCursorMode(CursorMode mode)

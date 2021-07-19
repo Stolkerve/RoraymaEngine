@@ -2,7 +2,7 @@
 #include <RoraymaEngine/Renderer/Renderer2D.hh>
 #include <RoraymaEngine/Scene/AssetsManager.hh>
 #include <RoraymaEngine/Core/Input.hh>
-
+#include <imgui/imgui.h>
 bool PointCircle(float px, float py, float cx, float cy, float r) {
 
 	// get distance between the point and circle's center
@@ -25,54 +25,77 @@ namespace rym
 	void SEOverlay::DrawOverlay(const std::shared_ptr<Entity>& entity, const EditorCamera& editorCamera, bool& blockSelectedEntity)
 	{
 		Renderer::SetLineWidth(1.6f);
-		Renderer2D::Begin(editorCamera);
 		Renderer2D::BeginWire(editorCamera);
-		if (entity->HaveComponent<SpriteComponent>())
+		Renderer2D::Begin(editorCamera);
+		SpriteComponent* sprite = entity->GetComponent<SpriteComponent>();
+		if (sprite)
 		{
-			auto spriteTransformCmp = *entity->GetComponent<TransformComponent>();
-			auto spriteTransform = spriteTransformCmp.GetTransform();
-			SpriteComponent reSprite = *entity->GetComponent<SpriteComponent>();
-			const auto& texture = AssetsManager::GetTexture(reSprite.texture);
-			reSprite.color = Color::BLUE;
-			if (texture.get())
+			TransformComponent* spriteTransformCmp = entity->GetComponent<TransformComponent>();
+			glm::mat4 overlayTransform = (*spriteTransformCmp).GetTransform();
+			SpriteComponent overlaySprite = *sprite;
+			overlaySprite.color = Color::BLUE;
+			Renderer2D::DrawWiredQuad(overlayTransform, overlaySprite.color, 22);
+
+			glm::vec2 top1 = { overlayTransform[3].x - (overlayTransform[0][0] * 0.5f), overlayTransform[3].y + (overlayTransform[1][1] * 0.5f) };
+			glm::vec2 top2 = { overlayTransform[3].x + (overlayTransform[0][0]) * 0.5f, overlayTransform[3].y + (overlayTransform[1][1]) * 0.5f };
+			glm::vec2 botton1 = { overlayTransform[3].x - (overlayTransform[0][0]) * 0.5f, overlayTransform[3].y - (overlayTransform[1][1]) * 0.5f };
+			glm::vec2 botton2 = { overlayTransform[3].x + (overlayTransform[0][0]) * 0.5f, overlayTransform[3].y - (overlayTransform[1][1]) * 0.5f };
+
+			float circleSize = std::clamp(editorCamera.GetZoomLevel() * 0.05f, 15.f, 400.f);
+			Renderer2D::DrawCircle(top1, { circleSize,circleSize }, Color::BLUE, 22, entity->ID);
+			Renderer2D::DrawCircle(top2, { circleSize,circleSize }, Color::BLUE, 22, entity->ID);
+			Renderer2D::DrawCircle(botton1, { circleSize, circleSize }, Color::BLUE, 22, entity->ID);
+			Renderer2D::DrawCircle(botton2, { circleSize, circleSize }, Color::BLUE, 22, entity->ID);
+			static bool c1 = false;
+			static bool c2 = false;
+			static bool c3 = false;
+			static bool c4 = false;
+
+			if (Input::IsButtonJustPressed(MouseCode::ButtonLeft))
 			{
-				float spriteWidth = static_cast<float>(texture->GetWidth());
-				float spriteHeight = static_cast<float>(texture->GetHeight());
-				//spriteTransform.scale = { spriteWidth, spriteHeight };
-				spriteTransform *= glm::scale(glm::mat4(1.f), { spriteWidth, spriteHeight, 0.f });
+				auto m = Input::GetCursorWorldPosition();
+				c1 = PointCircle(m.x, m.y, top1.x, top1.y, circleSize / 2.f);
+				c2 = PointCircle(m.x, m.y, top2.x, top2.y, circleSize / 2.f);
+				c3 = PointCircle(m.x, m.y, botton1.x, botton1.y, circleSize / 2.f);
+				c4 = PointCircle(m.x, m.y, botton2.x, botton2.y, circleSize / 2.f);
 			}
-			//Renderer2D::DrawSprite(&reSprite, spriteTransform, entity->ID);
-			Renderer2D::DrawWiredQuad(spriteTransform, reSprite.color, 22);
 
-			glm::vec2 top1 = { spriteTransform[3].x - (spriteTransform[0][0] * 0.5f), spriteTransform[3].y + (spriteTransform[1][1] * 0.5f) };
-			glm::vec2 top2 = { spriteTransform[3].x + (spriteTransform[0][0]) * 0.5f, spriteTransform[3].y + (spriteTransform[1][1]) * 0.5f };
-			glm::vec2 botton1 = { spriteTransform[3].x - (spriteTransform[0][0]) * 0.5f, spriteTransform[3].y - (spriteTransform[1][1]) * 0.5f };
-			glm::vec2 botton2 = { spriteTransform[3].x + (spriteTransform[0][0]) * 0.5f, spriteTransform[3].y - (spriteTransform[1][1]) * 0.5f };
 
-			Renderer2D::DrawCircle(top1, { 15.f, 15.f }, Color::BLUE, 22, entity->ID);
-			Renderer2D::DrawCircle(top2, { 15.f, 15.f }, Color::BLUE, 22, entity->ID);
-			Renderer2D::DrawCircle(botton1, { 15.f, 15.f }, Color::BLUE, 22, entity->ID);
-			Renderer2D::DrawCircle(botton2, { 15.f, 15.f }, Color::BLUE, 22, entity->ID);
-			if (Input::IsButtonPressed(MouseCode::ButtonLeft))
+			if (c1 || c2 || c3 || c4)
+			{
+				blockSelectedEntity = true;
+				if (Input::IsButtonPressed(MouseCode::ButtonLeft))
+				{
+						//+= glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
+						auto m = Input::GetMouseWorldDelta();
+						float mul = 2.0f;
+						if (!sprite->texture.empty())
+						{
+							if (c1)
+								spriteTransformCmp->fakeScale += glm::vec2(-m.x, m.y) * mul;
+							else if (c2)
+								spriteTransformCmp->fakeScale += glm::vec2(m.x, m.y) * mul;
+							else if (c3)
+								spriteTransformCmp->fakeScale += glm::vec2(-m.x, -m.y) * mul;
+							else
+								spriteTransformCmp->fakeScale += glm::vec2(m.x, -m.y) * mul;
+						}
+						else
+						{
+							if (c1)
+								spriteTransformCmp->scale += glm::vec2(-m.x, m.y) * mul;
+							else if (c2)
+								spriteTransformCmp->scale += glm::vec2(m.x, m.y) * mul;
+							else if (c3)
+								spriteTransformCmp->scale += glm::vec2(-m.x, -m.y) * mul;
+							else
+								spriteTransformCmp->scale += glm::vec2(m.x, -m.y) * mul;
+						}
+				}
+			}
+			else
 			{
 				blockSelectedEntity = false;
-				static bool isAnyCircleSelected = false;
-				if (Input::IsButtonJustPressed(MouseCode::ButtonLeft))
-				{
-					auto m = Input::GetCursorWorldPosition();
-					bool c1 = PointCircle(m.x, m.y, top1.x, top1.y, 15.f / 2.f);
-					bool c2 = PointCircle(m.x, m.y, top2.x, top2.y, 15.f / 2.f);
-					bool c3 = PointCircle(m.x, m.y, botton1.x, botton1.y, 15.f / 2.f);
-					bool c4 = PointCircle(m.x, m.y, botton2.x, botton2.y, 15.f / 2.f);
-					isAnyCircleSelected = c1 || c2 || c3 || c4;
-					//RYM_INFO("{0}, {1}, {2}, {3}", c1, c2, c3, c4);
-				}
-
-				if (isAnyCircleSelected)
-				{
-					blockSelectedEntity = true;
-					 
-				}
 			}
 			//RYM_INFO(top);
 		}

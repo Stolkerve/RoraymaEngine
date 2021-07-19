@@ -184,7 +184,7 @@ namespace rym {
 		}
 	}
 
-	void DrawTextureButton(SpriteComponent* sprite)
+	void DrawTextureButton(SpriteComponent* sprite, TransformComponent* transform)
 	{
 		/*
 		auto searchImage = [&]() {
@@ -224,8 +224,12 @@ namespace rym {
 					{
 						const auto name = castedData->Path.stem().string();
 						const auto path = castedData->Path.string();
-						AssetsManager::PushTexture(name, path);
 						sprite->texture = name;
+						auto tex = AssetsManager::PushTexture(name, path);
+						float textureWidth = static_cast<float>(tex->GetWidth());
+						float textureHeight = static_cast<float>(tex->GetHeight());
+						transform->scale = { textureWidth, textureHeight };
+						sprite->size = { textureWidth,textureHeight };
 					}
 				}
 				ImGui::EndDragDropTarget();

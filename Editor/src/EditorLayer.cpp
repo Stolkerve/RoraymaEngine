@@ -161,8 +161,8 @@ void EditorLayer::UpdateEditorMode(float _delta)
         m_ViewportFocused)
     {
 		//int IDSelected = m_FrameBuffer->ReadEntitys(int(m.x), int(m.y));
-		//RYM_INFO(IDSelected);
-        if (Input::IsButtonJustPressed(MouseCode::ButtonLeft))
+        bool a = ImGui::IsMouseClicked(0);
+        if (a)
         {
             int entityIDSelected = m_FrameBuffer->ReadEntitys(int(m.x), int(m.y));
             if (entityIDSelected >= 0) //&& entityPtrSelected == nullptr

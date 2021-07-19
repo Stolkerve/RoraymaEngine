@@ -46,7 +46,7 @@ namespace rym {
 
 	static void HelpMarker(const char* desc);
 
-	void DrawTextureButton(SpriteComponent* sprite);
+	void DrawTextureButton(SpriteComponent* sprite, TransformComponent* transform);
 
 	bool DrawCheckBox(const char* name, bool* b);
 

@@ -55,6 +55,7 @@ namespace rym
 		static glm::vec2 GetMouseWorldDelta();
 
 		static void SetMousePosition(const glm::vec2& v);
+		static void SetMouseJustPressed(bool action);
 
 		static void SetCursorShape(CursorShape shape);
 		static void SetCursorMode(CursorMode mode);
@@ -70,6 +71,7 @@ namespace rym
 		struct MouseData
 		{
 			bool scrollChange;
+			bool mouseOnce;
 
 			glm::vec2 scroll;
 

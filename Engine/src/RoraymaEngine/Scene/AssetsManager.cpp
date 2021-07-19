@@ -5,13 +5,14 @@ namespace rym
 {
 	AssetsManager::Data AssetsManager::m_Data;
 
-	void AssetsManager::PushTexture(const std::string& name, const std::string& path)
+	std::shared_ptr<api::Texture2D> AssetsManager::PushTexture(const std::string& name, const std::string& path)
 	{
 		auto it = m_Data.texturesConteiner.find(name);
 		if (it == m_Data.texturesConteiner.end())
 		{
-			m_Data.texturesConteiner.insert({ name, std::make_shared<api::Texture2D>(path) });
-			return;
+			auto newTex = std::make_shared<api::Texture2D>(path);
+			m_Data.texturesConteiner.insert({ name, newTex });
+			return newTex;
 		}
 
 		//RYM_CORE_ERROR(false, "ERROR: Cannot exists two o more textures with the same name and the extension is ignored. \nTexture: {0}\nPath: {1}", name, path);

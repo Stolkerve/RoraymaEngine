@@ -22,6 +22,7 @@ namespace rym
 	{
 		glm::vec2 translation = { 0.0f, 0.0f };
 		glm::vec2 scale = { 1.0f, 1.0f };
+		glm::vec2 fakeScale = { 1.0f, 1.0f };
 		float rotation = 0.0f ;
 
 		TransformComponent() = default;

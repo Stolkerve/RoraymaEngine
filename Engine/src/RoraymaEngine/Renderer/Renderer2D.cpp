@@ -97,21 +97,15 @@ namespace rym
 
 	void Renderer2D::DrawSprite(SpriteComponent* sprite, TransformComponent* transform, int ID)
 	{
-		auto spriteTransform = transform->GetTransform();
 		const auto& texture = AssetsManager::GetTexture(sprite->texture);
 		if (texture.get() != nullptr)
 		{
-			float textureWidth = static_cast<float>(texture->GetWidth());
-			float textureHeight = static_cast<float>(texture->GetHeight());
-			sprite->size = { textureWidth + transform->scale.x, textureHeight + transform->scale.y };
-			spriteTransform *= glm::scale(glm::mat4(1.f), { textureWidth, textureHeight, 0.f });
-
-			s_PolygonsBatching->DrawQuad(spriteTransform, texture, sprite->color, sprite->layer, ID);
+			s_PolygonsBatching->DrawQuad(transform->GetTransform(), texture, sprite->color, sprite->layer, ID);
 		}
 		else
 		{
 			sprite->size = { transform->scale.x, transform->scale.y };
-			s_PolygonsBatching->DrawQuad(spriteTransform, sprite->color, sprite->layer, ID);
+			s_PolygonsBatching->DrawQuad(transform->GetTransform(), sprite->color, sprite->layer, ID);
 		}
 	}
 

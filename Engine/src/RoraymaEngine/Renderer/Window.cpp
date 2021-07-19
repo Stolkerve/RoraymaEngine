@@ -139,6 +139,7 @@ namespace rym
 			glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 				{
 					WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
 					switch (action)
 					{
 					case GLFW_PRESS:
@@ -169,11 +170,16 @@ namespace rym
 			glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
 				{
 					WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+					if (button == GLFW_MOUSE_BUTTON_1 && action != GLFW_RELEASE)
+					{
+						Input::SetMouseJustPressed(true);
+					}
+					else
+						Input::SetMouseJustPressed(false);
 					switch (action)
 					{
 					case GLFW_PRESS:
 					{
-
 						data.e.type = Event::EventType::MOUSE_BUTTON_PRESSED_EVENT;
 						data.e.MouseButton = { button, mods };
 						data.Events.push(data.e);
@@ -181,6 +187,7 @@ namespace rym
 					}
 					case GLFW_RELEASE:
 					{
+						//Input::SetMouseJustPressed(true);
 
 						data.e.type = Event::EventType::MOUSE_BUTTON_REALEASED_EVENT;
 						data.e.MouseButton = { button, mods };
