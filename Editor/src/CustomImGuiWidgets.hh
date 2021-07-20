@@ -18,16 +18,18 @@ namespace rym {
 	void DragMouseDisable();
 
 	template<typename T>
-	void DeleteComponent(const std::shared_ptr<Entity>& entitySelected)
+	bool DeleteComponent(const std::shared_ptr<Entity>& entitySelected)
 	{
+		bool res = false;
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (ImGui::MenuItem(ICON_FA_TRASH"  Delete component"))
 			{
-				entitySelected->DeleteComponent<T>();
+				res = entitySelected->DeleteComponent<T>();
 			}
 			ImGui::EndPopup();
 		}
+		return res;
 	}
 
 	bool DrawDragIntPlusMinus(const char* label, int* value, int reset = 0, int min = 0, int max = 0);

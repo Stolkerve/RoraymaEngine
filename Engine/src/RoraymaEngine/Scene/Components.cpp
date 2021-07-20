@@ -35,4 +35,10 @@ namespace rym
 	{
 		return PyScriptComponentType;
 	}
+
+    static ComponentType PolygonShapeComponentType = typeid(PolygonShapeComponent).hash_code();
+    ComponentType PolygonShapeComponent::GetType()
+    {
+        return PolygonShapeComponentType;
+    }
 }

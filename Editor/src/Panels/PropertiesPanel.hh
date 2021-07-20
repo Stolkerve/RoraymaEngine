@@ -32,13 +32,18 @@ namespace rym
 			CameraComponent* cameraComponent;
 			SpriteComponent* spriteComponent;
 			PyScriptComponent* pyScriptComponent;
+			PolygonShapeComponent* polygonShapeComponent;
 
 			EntitySelected& operator=(const std::shared_ptr<Entity>& other) {
 				this->entity = other;
-				this->transformComponent = other->GetComponent<TransformComponent>();
-				this->cameraComponent = other->GetComponent<CameraComponent>();
-				this->spriteComponent = other->GetComponent<SpriteComponent>();
-				this->pyScriptComponent = other->GetComponent<PyScriptComponent>();
+				if (this->entity)
+				{
+					this->transformComponent = other->GetComponent<TransformComponent>();
+					this->cameraComponent = other->GetComponent<CameraComponent>();
+					this->spriteComponent = other->GetComponent<SpriteComponent>();
+					this->pyScriptComponent = other->GetComponent<PyScriptComponent>();
+					this->polygonShapeComponent = other->GetComponent<PolygonShapeComponent>();
+				}
 				return *this;
 			}
 

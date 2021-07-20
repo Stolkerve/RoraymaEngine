@@ -12,30 +12,32 @@ namespace rym
 	{
 	public:
 		template<class T, typename ... Params>
-		void AddComponent(Params&&... params)
+		T* AddComponent(Params&&... params)
 		{
 			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
 				m_Components[type] = reinterpret_cast<void*>(new T(std::forward<Params>(params)...));
-				return;
+				return static_cast<T*>(m_Components[type]);
 			}
 			RYM_CORE_ERROR("The entity {0} already have the {1} component ", Tag, type);
+			return nullptr;
 		}
 
 		template <class T>
-		void DeleteComponent()
+		bool DeleteComponent()
 		{
 			auto type = T::GetType();
 			auto it = m_Components.find(type);
 			if (it == m_Components.end())
 			{
 				RYM_CORE_ERROR("The entity {0} cannot delete the {1} component, this was not found ", Tag, type);
-				return;
+				return false;
 			}
 			delete it->second;
 			m_Components.erase(type);
+			return true;
 		}
 
 		template <class T>

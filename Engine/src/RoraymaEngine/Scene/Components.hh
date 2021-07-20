@@ -2,6 +2,7 @@
 
 #include<string>
 #include <memory>
+#include <vector>
 
 #include <glm/glm.hpp>
 #include <glm/ext/matrix_transform.hpp>
@@ -122,6 +123,11 @@ namespace rym
 		std::string filePath;
 		std::string moduleName;
 
+		static ComponentType GetType();
+	};
+
+	struct PolygonShapeComponent {
+		std::vector<glm::vec2> points;
 		static ComponentType GetType();
 	};
 }

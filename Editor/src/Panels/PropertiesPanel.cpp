@@ -44,10 +44,13 @@ namespace rym
 					//RYM_INFO("{0}. Antes de referenciar", transfrom->Translation);
 					DrawVec2("Position", m_EntitySelected.transformComponent->translation, 0.1f);
 					//RYM_INFO("{0}. Despues de referenciar", transfrom->Translation);
-					if (!m_EntitySelected.spriteComponent->texture.empty())
+					if (m_EntitySelected.spriteComponent)
 					{
-						DrawVec2("Scale", m_EntitySelected.transformComponent->fakeScale, 0.1f, 1.f);
-						m_EntitySelected.transformComponent->scale = m_EntitySelected.transformComponent->fakeScale + m_EntitySelected.spriteComponent->size;
+						if (!m_EntitySelected.spriteComponent->texture.empty())
+						{
+							DrawVec2("Scale", m_EntitySelected.transformComponent->fakeScale, 0.1f, 1.f);
+							m_EntitySelected.transformComponent->scale = m_EntitySelected.transformComponent->fakeScale + m_EntitySelected.spriteComponent->size;
+						}
 					}
 					else
 						DrawVec2("Scale", m_EntitySelected.transformComponent->scale, 0.1f, 1.f);
@@ -62,12 +65,15 @@ namespace rym
 
 				if (ImGui::CollapsingHeader(ICON_FA_VIDEO"  Camera", headerFlags))
 				{
-					DeleteComponent<CameraComponent>(m_EntitySelected.entity);
-					DrawCheckBox("Current", &m_EntitySelected.cameraComponent->current);
-					//float preOrthoSize = camera->Camera.GetOrthoSize();
-					//float orthoSize = preOrthoSize;
-					if (DrawDragFloat("OrthoSize", m_EntitySelected.cameraComponent->camera.m_OrthoSize, 1.f, 500.f))
-						m_EntitySelected.cameraComponent->camera.SetOrthoSize(m_EntitySelected.cameraComponent->camera.m_OrthoSize);
+					if (!DeleteComponent<CameraComponent>(m_EntitySelected.entity))
+					{
+						DrawCheckBox("Current", &m_EntitySelected.cameraComponent->current);
+						//float preOrthoSize = camera->Camera.GetOrthoSize();
+						//float orthoSize = preOrthoSize;
+						if (DrawDragFloat("OrthoSize", m_EntitySelected.cameraComponent->camera.m_OrthoSize, 1.f, 500.f))
+							m_EntitySelected.cameraComponent->camera.SetOrthoSize(m_EntitySelected.cameraComponent->camera.m_OrthoSize);
+					}
+					else m_EntitySelected.cameraComponent = nullptr;
 				}
 			}
 
@@ -78,19 +84,20 @@ namespace rym
 
 				if (ImGui::CollapsingHeader(ICON_FA_GHOST"  Sprite", headerFlags))
 				{
-					DeleteComponent<SpriteComponent>(m_EntitySelected.entity);
-					DrawTextureButton(m_EntitySelected.spriteComponent, m_EntitySelected.transformComponent);
+					if (!DeleteComponent<SpriteComponent>(m_EntitySelected.entity))
+					{
+						DrawTextureButton(m_EntitySelected.spriteComponent, m_EntitySelected.transformComponent);
 
-					if (DrawCheckBox("FlipH", &m_EntitySelected.spriteComponent->flipH))
-						m_EntitySelected.transformComponent->scale.x = m_EntitySelected.spriteComponent->flipH ? m_EntitySelected.transformComponent->scale.x * -1.f : m_EntitySelected.transformComponent->scale.x * -1.f;
-					if (DrawCheckBox("FlipV", &m_EntitySelected.spriteComponent->flipV))
-						m_EntitySelected.transformComponent->scale.y = m_EntitySelected.spriteComponent->flipV ? m_EntitySelected.transformComponent->scale.y * -1.f : m_EntitySelected.transformComponent->scale.y * -1.f;
+						if (DrawCheckBox("FlipH", &m_EntitySelected.spriteComponent->flipH))
+							m_EntitySelected.transformComponent->scale.x = m_EntitySelected.spriteComponent->flipH ? m_EntitySelected.transformComponent->scale.x * -1.f : m_EntitySelected.transformComponent->scale.x * -1.f;
+						if (DrawCheckBox("FlipV", &m_EntitySelected.spriteComponent->flipV))
+							m_EntitySelected.transformComponent->scale.y = m_EntitySelected.spriteComponent->flipV ? m_EntitySelected.transformComponent->scale.y * -1.f : m_EntitySelected.transformComponent->scale.y * -1.f;
 
-					//ImGui::Separator();
-					// Color treenode
-					DrawColorPicker4("Self color", glm::value_ptr(m_EntitySelected.spriteComponent->color.rgba));
-					int a = 0;
-					DrawSliderInt("Layer", m_EntitySelected.spriteComponent->layer, 0, -20, 20);
+						DrawColorPicker4("Self color", glm::value_ptr(m_EntitySelected.spriteComponent->color.rgba));
+						int a = 0;
+						DrawSliderInt("Layer", m_EntitySelected.spriteComponent->layer, 0, -20, 20);
+					}
+					else m_EntitySelected.spriteComponent = nullptr;
 				}
 			}
 
@@ -100,52 +107,55 @@ namespace rym
 
 				if (ImGui::CollapsingHeader(ICON_FA_CODE"  PyScripts", headerFlags))
 				{
-					DeleteComponent<PyScriptComponent>(m_EntitySelected.entity);
-					if (m_EntitySelected.pyScriptComponent->filePath.empty())
+					if (!DeleteComponent<PyScriptComponent>(m_EntitySelected.entity))
 					{
-						if (ImGui::Button("Create"))
+						if (m_EntitySelected.pyScriptComponent->filePath.empty())
 						{
-							auto path = std::filesystem::current_path().string() + "//assets//scripts//" + m_EntitySelected.entity->Tag + ".py";
-							std::ofstream file;
-							file.open(path);
-							file << "import PyScripting\n";
-							file << "from PyScripting import Math, Input\n\n";
-							file << "#VERY IMPORTANT DO NOT CHANGE THE FILE NAME.\n\n";
-							file << "class " << m_EntitySelected.entity->Tag << "(PyScripting.PyScript):\n";
-							file << "\ttransform = None\n";
-							file << "\tdef OnStart(self):\n\t\tself.transform = self.entity.GetTransformComponent()\n";
-							file << "\tdef OnUpdate(self, _delta):\n\t\t#update\n\t\tpass\n";
-							file << "\tdef OnQuit(self):\n\t\tpass\n";
-							file.close();
-							m_EntitySelected.pyScriptComponent->filePath = path;
-							m_EntitySelected.pyScriptComponent->moduleName = m_EntitySelected.entity->Tag;
-							m_EntitySelected.pyScriptComponent->CreateScript(std::make_shared<PyScript>(m_EntitySelected.pyScriptComponent->moduleName, m_EntitySelected.entity));
-
-							CodeEditorPanel::PushFile(path);
-						}
-						ImGui::SameLine();
-						ImGui::Button("Drop");
-						if (ImGui::BeginDragDropTarget())
-						{
-							if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FOLDDERS_PANEL"))
+							if (ImGui::Button("Create"))
 							{
-								auto castedData = reinterpret_cast<const FoldersData*>(payload->Data);
-								auto ex = castedData->Path.extension();
-								if (ex == ".py")
-								{
-									m_EntitySelected.pyScriptComponent->filePath = castedData->Path.string();
-									m_EntitySelected.pyScriptComponent->moduleName = castedData->Path.stem().string();
-									m_EntitySelected.pyScriptComponent->CreateScript(std::make_shared<PyScript>(m_EntitySelected.pyScriptComponent->moduleName, m_EntitySelected.entity));
-									CodeEditorPanel::PushFile(m_EntitySelected.pyScriptComponent->filePath);
-								}
+								auto path = std::filesystem::current_path().string() + "//assets//scripts//" + m_EntitySelected.entity->Tag + ".py";
+								std::ofstream file;
+								file.open(path);
+								file << "import PyScripting\n";
+								file << "from PyScripting import Math, Input\n\n";
+								file << "#VERY IMPORTANT DO NOT CHANGE THE FILE NAME.\n\n";
+								file << "class " << m_EntitySelected.entity->Tag << "(PyScripting.PyScript):\n";
+								file << "\ttransform = None\n";
+								file << "\tdef OnStart(self):\n\t\tself.transform = self.entity.GetTransformComponent()\n";
+								file << "\tdef OnUpdate(self, _delta):\n\t\t#update\n\t\tpass\n";
+								file << "\tdef OnQuit(self):\n\t\tpass\n";
+								file.close();
+								m_EntitySelected.pyScriptComponent->filePath = path;
+								m_EntitySelected.pyScriptComponent->moduleName = m_EntitySelected.entity->Tag;
+								m_EntitySelected.pyScriptComponent->CreateScript(std::make_shared<PyScript>(m_EntitySelected.pyScriptComponent->moduleName, m_EntitySelected.entity));
+
+								CodeEditorPanel::PushFile(path);
 							}
-							ImGui::EndDragDropTarget();
+							ImGui::SameLine();
+							ImGui::Button("Drop");
+							if (ImGui::BeginDragDropTarget())
+							{
+								if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FOLDDERS_PANEL"))
+								{
+									auto castedData = reinterpret_cast<const FoldersData*>(payload->Data);
+									auto ex = castedData->Path.extension();
+									if (ex == ".py")
+									{
+										m_EntitySelected.pyScriptComponent->filePath = castedData->Path.string();
+										m_EntitySelected.pyScriptComponent->moduleName = castedData->Path.stem().string();
+										m_EntitySelected.pyScriptComponent->CreateScript(std::make_shared<PyScript>(m_EntitySelected.pyScriptComponent->moduleName, m_EntitySelected.entity));
+										CodeEditorPanel::PushFile(m_EntitySelected.pyScriptComponent->filePath);
+									}
+								}
+								ImGui::EndDragDropTarget();
+							}
+						}
+						else
+						{
+							ImGui::Button((m_EntitySelected.entity->Tag + ".py").c_str());
 						}
 					}
-					else
-					{
-						ImGui::Button((m_EntitySelected.entity->Tag + ".py").c_str());
-					}
+					else m_EntitySelected.pyScriptComponent = nullptr;
 				}
 			}
 
@@ -160,15 +170,15 @@ namespace rym
 				{
 					if (ImGui::Selectable("Sprite Component"))
 					{
-						m_EntitySelected.entity->AddComponent<SpriteComponent>();
+						m_EntitySelected.spriteComponent = m_EntitySelected.entity->AddComponent<SpriteComponent>();
 					}
 					if (ImGui::Selectable("Camera Component"))
 					{
-						m_EntitySelected.entity->AddComponent<CameraComponent>(m_CurrentScene->m_Size.x / m_CurrentScene->m_Size.y);
+						m_EntitySelected.cameraComponent = m_EntitySelected.entity->AddComponent<CameraComponent>(m_CurrentScene->m_Size.x / m_CurrentScene->m_Size.y);
 					}
 					if (ImGui::Selectable("PyScript Component"))
 					{
-						m_EntitySelected.entity->AddComponent<PyScriptComponent>();
+						m_EntitySelected.pyScriptComponent = m_EntitySelected.entity->AddComponent<PyScriptComponent>();
 					}
 					ImGui::EndPopup();
 				}
