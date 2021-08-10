@@ -244,30 +244,40 @@ namespace rym
 				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("GhostEditor"), Color::WHITE, 21, e->ID);
 			}
 
-			if (e->HaveComponent<PyScriptComponent>())
+			auto [transform, script, sprite, camera, polygonShape] = std::make_tuple(
+				e->GetComponent<TransformComponent>(),
+				e->GetComponent<PyScriptComponent>(),
+				e->GetComponent<SpriteComponent>(),
+				e->GetComponent<CameraComponent>(),
+				e->GetComponent<PolygonShapeComponent>()
+			);
+
+			if (script)
 			{
-				auto script = e->GetComponent<PyScriptComponent>();
 				if (script->ptr && script->start)
 				{
 					script->start = false;
 				}
 			}
 
-			if (e->HaveComponent<SpriteComponent>())
+			if (sprite)
 			{
-				auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
 				// Only in the editor, when a sprite have a texture, the y axis invert because yes.
 				Renderer2D::DrawSprite(sprite, transform, e->ID);
 			}
 
-			if (e->HaveComponent<CameraComponent>())
+			if (camera)
 			{
-				auto transform = e->GetComponent<TransformComponent>();
-				auto camera = e->GetComponent<CameraComponent>();
 				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
 				float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
 				float top = camera->camera.GetOrthoSize() * 2.f;
-				Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::WHITE, 21);
+				Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::NICE_BLUE, 21);
+			}
+
+			if (polygonShape)
+			{
+				if(polygonShape->points.size() > 0)
+					Renderer2D::DrawPolygon(polygonShape->points, transform->GetTransform(), polygonShape->color, polygonShape->layer, e->ID);
 			}
 		}
 
@@ -288,66 +298,6 @@ namespace rym
 
 	void Scene::OnUpdateGame(float _delta)
 	{
-	#if 0
-		/***************************Scripting**********************************/
-		for (auto& e : m_Entitys)
-		{
-			if (e->HaveComponent<PyScriptComponent>())
-			{
-				auto script = e->GetComponent<PyScriptComponent>();
-				if (script->ptr)
-				{
-					if (!script->start)
-					{
-						script->ptr->m_Entity = e;
-						script->ptr->Reload();
-						script->ptr->OnStart();
-						script->start = true;
-					}
-
-					script->ptr->OnUpdate(_delta);
-				}
-			}
-		}
-
-		/***************************Rendering**********************************/
-		Camera* mainCamera = nullptr;
-		TransformComponent* mainCameraTransform = nullptr;
-
-		// Looking for the current cameras (Camera2D)
-		{
-			for (auto& e : m_Entitys)
-			{
-				if (e->HaveComponent<CameraComponent>())
-				{
-					auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
-					//static CameraComponent* previusCamera = nullptr;
-					// Get the first current camera
-					if (e->visible && camera->current)
-					{
-						mainCamera = &camera->camera;
-						mainCameraTransform = transform;
-						break;
-					}
-				}
-			}
-		}
-
-		// play the game
-		if (mainCamera)
-		{
-			Renderer2D::Begin(*mainCamera, *mainCameraTransform);
-			for (auto& e : m_Entitys)
-			{
-				if (e->visible && e->HaveComponent<SpriteComponent>())
-				{
-					auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
-					Renderer2D::DrawSprite(sprite, transform);
-				}
-			}
-			Renderer2D::End();
-		}
-	#endif
 		Camera* mainCamera = nullptr;
 		TransformComponent* mainCameraTransform = nullptr;
 		// Looking for the current cameras (Camera2D)
@@ -376,9 +326,9 @@ namespace rym
 
 		for (auto& e : m_Entitys)
 		{
-			if (e->HaveComponent<PyScriptComponent>())
+			auto script = e->GetComponent<PyScriptComponent>();
+			if (script)
 			{
-				auto script = e->GetComponent<PyScriptComponent>();
 				if (script->ptr)
 				{
 					if (!script->start)
@@ -395,10 +345,16 @@ namespace rym
 
 			if (mainCamera)
 			{
-				if (e->visible && e->HaveComponent<SpriteComponent>())
+				auto [transform, sprite, polygonShape] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>(), e->GetComponent<PolygonShapeComponent>());
+				if (e->visible && sprite)
 				{
-					auto [transform, sprite] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>());
 					Renderer2D::DrawSprite(sprite, transform);
+				}
+
+				if (e->visible && polygonShape)
+				{
+					if (polygonShape->points.size() > 0)
+						Renderer2D::DrawPolygon(polygonShape->points, transform->GetTransform(), polygonShape->color, polygonShape->layer, e->ID);
 				}
 			}
 		}

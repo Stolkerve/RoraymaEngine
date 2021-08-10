@@ -44,7 +44,7 @@ private:
 	std::shared_ptr<Scene>* m_SelectedScene;
 	std::shared_ptr<FrameBuffer> m_FrameBuffer;
 	std::vector<std::shared_ptr<Scene>> m_Scenes;
-
+	std::shared_ptr<Entity> m_EntitySelected = nullptr;
 	//DynamicGrid m_DynamicGrid;
 
 	EditorCamera m_EditorCamera;

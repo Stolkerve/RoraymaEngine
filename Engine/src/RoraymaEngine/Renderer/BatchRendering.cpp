@@ -196,7 +196,7 @@ namespace rym
 			BatchStatistics::Get().NumOfVertices += vertexCount;
 		}
 
-		void Polygons::DrawPolygon(const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int ID)
+		void Polygons::DrawPolygon(const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
 			std::vector<glm::vec2> result; // TODO: reserve space
 			Triangulate::Process(vertices, result);
@@ -213,42 +213,7 @@ namespace rym
 				m_VertexBufferPtr->Color = color.GetColor();
 				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
 				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = 0.f;
-				m_VertexBufferPtr->EntityID = ID;
-				m_VertexBufferPtr++;
-			}
-
-			m_VerticesCount += vertexCount;
-			BatchStatistics::Get().NumOfVertices += vertexCount;
-		}
-
-		void Polygons::DrawPolygon(std::string name, const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int ID)
-		{
-			std::vector<glm::vec2> result; // TODO: reserve space
-
-			auto it = s_Meshes.find(name);
-			if (it != s_Meshes.end()) {
-				
-			}
-			else {
-				Triangulate::Process(vertices, result);
-				s_Meshes.insert({ name, result });
-			}
-
-
-			size_t vertexCount = result.size();
-			constexpr float textureIndex = 0.0f; // White Texture
-
-			if (m_VerticesCount + vertexCount >= m_MaxVertices)
-				NextBatch();
-
-			for (size_t i = 0; i < vertexCount; i++)
-			{
-				m_VertexBufferPtr->Position = transform * glm::vec4(s_Meshes[name][i], 0.f, 1.f);
-				m_VertexBufferPtr->Color = color.GetColor();
-				m_VertexBufferPtr->TexCoord = m_QuadTextureCoords[i];
-				m_VertexBufferPtr->TexIndex = textureIndex;
-				m_VertexBufferPtr->Layer = 0.f;
+				m_VertexBufferPtr->Layer = layer;
 				m_VertexBufferPtr->EntityID = ID;
 				m_VertexBufferPtr++;
 			}

@@ -12,6 +12,9 @@ void EditorLayer::OnStart()
 	m_Scenes.push_back(std::make_shared<Scene>("TestScene"));
 	//m_SelectedScene = &m_Scenes.back(); // More later
     m_EntitysPanel.SetContext(m_Scenes.back());
+    m_EntitysPanel.SetSceneEntitySelectedCallback([&](const std::shared_ptr<Entity> newEntitySelected) {
+        m_EntitySelected = newEntitySelected;
+        });
 
 	// Buhhhh use std::bind. Labmdas > std::bind
 	m_FoldersPanel.SetChangeSceneCallBack([&](const std::string& path) {
@@ -149,13 +152,12 @@ void EditorLayer::UpdateEditorMode(float _delta)
 
     // Picking
     m.y = m_ViewportSize.y - m.y; //Flip y axis
-    static std::shared_ptr<Entity> entityPtrSelected = nullptr;
 
 	static bool canDrawOverlay = false;
 
 	if (canDrawOverlay)
 	{
-		m_SEOVerlay.DrawOverlay(entityPtrSelected, m_EditorCamera, m_BlockSelectedEntity);
+		m_SEOVerlay.DrawOverlay(m_EntitySelected, m_EditorCamera, m_BlockSelectedEntity);
 	}
     if (m.x > 0 && m.x < m_ViewportSize.x && m.y > 0 && m.y < m_ViewportSize.y &&
         m_ViewportFocused)
@@ -167,31 +169,31 @@ void EditorLayer::UpdateEditorMode(float _delta)
             int entityIDSelected = m_FrameBuffer->ReadEntitys(int(m.x), int(m.y));
             if (entityIDSelected >= 0) //&& entityPtrSelected == nullptr
             {
-                entityPtrSelected = m_Scenes.back()->GetEntity(entityIDSelected);
-                m_EntitysPanel.EntityClicked(entityPtrSelected);
+                m_EntitySelected = m_Scenes.back()->GetEntity(entityIDSelected);
+                m_EntitysPanel.EntityClicked(m_EntitySelected);
             }
 			else
 			{
 				canDrawOverlay = false;
-				entityPtrSelected = nullptr;
+                m_EntitySelected = nullptr;
 			}
         }
 
-        if (entityPtrSelected != nullptr)
+        if (m_EntitySelected != nullptr)
         {
 			canDrawOverlay = true;
 			if (Input::IsButtonPressed(MouseCode::ButtonLeft))
 			{
-				m_EntitysPanel.EntityClicked(entityPtrSelected);
+				m_EntitysPanel.EntityClicked(m_EntitySelected);
 
 				// Move the entity along the mouse
-				MoveEntity(entityPtrSelected, _delta);
+				MoveEntity(m_EntitySelected, _delta);
 			}
         }
 		else
 		{
 			canDrawOverlay = false;
-            entityPtrSelected = nullptr;
+            m_EntitySelected = nullptr;
 		}
     }
 

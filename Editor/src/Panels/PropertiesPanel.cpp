@@ -11,6 +11,7 @@
 #include "CodeEditorPanel.hh"
 #include "../CustomImGuiWidgets.hh"
 #include "FoldersPanel.hh"
+#include <imgui/imgui_internal.h>
 
 
 namespace rym
@@ -51,6 +52,8 @@ namespace rym
 							DrawVec2("Scale", m_EntitySelected.transformComponent->fakeScale, 0.1f, 1.f);
 							m_EntitySelected.transformComponent->scale = m_EntitySelected.transformComponent->fakeScale + m_EntitySelected.spriteComponent->size;
 						}
+						else
+							DrawVec2("Scale", m_EntitySelected.transformComponent->scale, 0.1f, 1.f);
 					}
 					else
 						DrawVec2("Scale", m_EntitySelected.transformComponent->scale, 0.1f, 1.f);
@@ -101,6 +104,7 @@ namespace rym
 				}
 			}
 
+			/* Pyscript */
 			if (m_EntitySelected.pyScriptComponent)
 			{
 				ImGui::Separator();
@@ -159,6 +163,26 @@ namespace rym
 				}
 			}
 
+			/* Polygon Shape */
+			if (m_EntitySelected.polygonShapeComponent)
+			{
+				ImGui::Separator();
+
+				if (ImGui::CollapsingHeader(ICON_FA_DRAW_POLYGON"  PolygonShape", headerFlags))
+				{
+					if (!DeleteComponent<PolygonShapeComponent>(m_EntitySelected.entity))
+					{
+						DrawArrayVec2(m_EntitySelected.polygonShapeComponent->points);
+						//auto windowWidth = ImGui::GetWindowSize().x;
+						//auto textWidth = ImGui::CalcTextSize(ICON_FA_PLUS" Add point").x;
+						//ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+					}
+					else m_EntitySelected.polygonShapeComponent = nullptr;
+					ImGui::Spacing();
+					DrawColorPicker4("Color", glm::value_ptr(m_EntitySelected.polygonShapeComponent->color.rgba));
+				}
+			}
+
 			/* Add component */
 			{
 				ImGui::Separator();
@@ -179,6 +203,10 @@ namespace rym
 					if (ImGui::Selectable("PyScript Component"))
 					{
 						m_EntitySelected.pyScriptComponent = m_EntitySelected.entity->AddComponent<PyScriptComponent>();
+					}
+					if (ImGui::Selectable("PolygonShape Component"))
+					{
+						m_EntitySelected.polygonShapeComponent = m_EntitySelected.entity->AddComponent<PolygonShapeComponent>();
 					}
 					ImGui::EndPopup();
 				}

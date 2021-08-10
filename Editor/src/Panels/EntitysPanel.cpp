@@ -45,7 +45,7 @@ namespace rym
 		}
 	}
 
-	void EntitysPanel::EntityClicked(std::shared_ptr<Entity> entity)
+	void EntitysPanel::EntityClicked(const std::shared_ptr<Entity>& entity)
 	{
 		m_SelectedEntity = entity;
 		m_PropertiesPanel.EntityClicked(m_SelectedEntity);
@@ -108,17 +108,19 @@ namespace rym
 			{
 				m_CurrentScene->CreateEntity("Empty_Entity", m_SelectedEntity);
 				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
-				ConsolePanel::GetInstace()->PushMessage("hola");
+				m_SetSceneEntitySelected(m_SelectedEntity);
 			}
 			if (ImGui::MenuItem("Add Sprite"))
 			{
 				m_CurrentScene->CreateSprite("Sprite", m_SelectedEntity);
 				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+				m_SetSceneEntitySelected(m_SelectedEntity);
 			}
 			if (ImGui::MenuItem("Add Camera"))
 			{
 				m_CurrentScene->CreateCamera("Camera", m_SelectedEntity);
 				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+				m_SetSceneEntitySelected(m_SelectedEntity);
 			}
 			if (ImGui::MenuItem("Import Scene"))
 			{
@@ -130,5 +132,10 @@ namespace rym
 		ImGui::End();
 
 		m_PropertiesPanel.Render();
+	}
+
+	void EntitysPanel::SetSceneEntitySelectedCallback(std::function<void(const std::shared_ptr<Entity>&)> fun)
+	{
+		m_SetSceneEntitySelected = fun;
 	}
 }

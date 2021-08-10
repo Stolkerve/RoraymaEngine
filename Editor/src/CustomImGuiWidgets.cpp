@@ -100,11 +100,11 @@ namespace rym {
 		return open;
 	}
 
-	bool DrawVec2(const std::string_view& label, glm::vec2& vec, float force, float resetValue)
+	bool DrawVec2(const std::string_view& label, glm::vec2& vec, float force, float resetValue, float space)
 	{
 		ImGui::PushID(label.data());
 		ImGui::Text(label.data());
-		ImGui::SameLine(sameLineSpace);
+		ImGui::SameLine(space);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{ 0, GImGui->Style.FramePadding.y });
 		if (ImGui::Button(ICON_FA_REDO))
 			vec = { resetValue, resetValue };
@@ -274,5 +274,29 @@ namespace rym {
 		bool res = ImGui::InputText("###name", buffer, sizeof(buffer), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CharsNoBlank);
 		ImGui::PopID();
 		return std::make_pair(res, buffer);
+	}
+
+	void DrawArrayVec2(std::vector<glm::vec2>& vectors)
+	{
+		size_t i = 0;
+		for (auto& v : vectors)
+		{
+			DrawVec2(std::to_string(i), v, 1.f, 0.f, 40.f);
+			if (ImGui::BeginPopupContextItem(std::to_string(i).c_str()))
+			{
+				if (ImGui::MenuItem("delete point"))
+				{
+					vectors.erase(vectors.begin() + i);
+				}
+				ImGui::EndPopup();
+			}
+			i++;
+		}
+		ImGui::Spacing();
+		ImGui::SetCursorPosX(40.f);
+		if (ImGui::Button(ICON_FA_PLUS" Add point"))//{ ImGui::GetContentRegionAvailWidth(), 0 }
+		{
+			vectors.push_back(glm::vec2(0.f, 0.f));
+		}
 	}
 }

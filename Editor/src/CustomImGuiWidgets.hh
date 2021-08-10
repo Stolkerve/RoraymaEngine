@@ -38,7 +38,7 @@ namespace rym {
 
 	bool DrawDragFloat2(const char* label, float* value, float force);
 
-	bool DrawVec2(const std::string_view& label, glm::vec2& vec, float force = 1.0f, float resetValue = 0.f);
+	bool DrawVec2(const std::string_view& label, glm::vec2& vec, float force = 1.0f, float resetValue = 0.f, float space = 72);
 
 	bool DrawDragFloat(const std::string& label, float& value, float force = 1.f, float reset = 0.f, float min = 0.0f, float max = 0.0f);
 
@@ -55,4 +55,6 @@ namespace rym {
 	void DrawColorPicker4(const char* name, float* col);
 
 	std::pair<bool, std::string> DrawTextInput(const char* name, std::string& target, int max);
+
+	void DrawArrayVec2(std::vector<glm::vec2>& vectors);
 }

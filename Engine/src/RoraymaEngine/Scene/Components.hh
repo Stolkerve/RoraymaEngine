@@ -128,6 +128,8 @@ namespace rym
 
 	struct PolygonShapeComponent {
 		std::vector<glm::vec2> points;
+		rym::Color color = rym::Color::WHITE;
+		int layer = 0;
 		static ComponentType GetType();
 	};
 }

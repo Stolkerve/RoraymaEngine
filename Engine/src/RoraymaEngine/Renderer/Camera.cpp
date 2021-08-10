@@ -87,7 +87,7 @@ namespace rym
 		m_LastMouseViewport = m_FirstMouseViewport;
 
 		auto mouse = Input::GetCursorPosition();
-		if (Input::IsButtonPressed(MouseCode::ButtonMiddle))
+		if (Input::IsButtonPressed(MouseCode::ButtonRight))
 		{
 			//RYM_INFO(mouseViewport);
 			PanMouse();

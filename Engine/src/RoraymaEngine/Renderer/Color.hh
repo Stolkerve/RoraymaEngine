@@ -35,6 +35,7 @@ namespace rym
 		static const glm::vec4 YELLOW;
 		static const glm::vec4 CYAN;
 		static const glm::vec4 MAGENTA;
+		static const glm::vec4 NICE_BLUE;
 
 		glm::vec4 rgba = {0.f, 0.f, 0.f, 255.f};
 	};

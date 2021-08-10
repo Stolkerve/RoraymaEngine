@@ -10,4 +10,5 @@ namespace rym
 	const glm::vec4 Color::YELLOW = { 1.f, 1.f, 0.f, 1.f };
 	const glm::vec4 Color::CYAN = { 0.f, 1.f, 1.f, 1.f };
 	const glm::vec4 Color::MAGENTA = { 1.f, 0.f, 1.f, 1.f };
+	const glm::vec4 Color::NICE_BLUE = { 3.f / 255.f, 65.f / 255.f, 252.f / 255.f, 1.f };
 }

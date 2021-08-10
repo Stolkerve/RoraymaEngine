@@ -114,17 +114,16 @@ namespace rym
 	//	s_PolygonsBatching->DrawQuad(transform, sprite->color, ID);
 	//}
 
-	void Renderer2D::DrawPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color)
+	void Renderer2D::DrawPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color, int layer, int ID)
 	{
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
 			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		s_PolygonsBatching->DrawPolygon(vertices, transform, color);
+		s_PolygonsBatching->DrawPolygon(vertices, transform, color, layer, ID);
 	}
-	void Renderer2D::DrawPolygon(std::string name, std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color)
+
+	void Renderer2D::DrawPolygon(std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int layer, int ID)
 	{
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.f })
-			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		s_PolygonsBatching->DrawPolygon(name, vertices, transform, color);
+		s_PolygonsBatching->DrawPolygon(vertices, transform, color, layer, ID);
 	}
 
 	void Renderer2D::DrawRectTriangle(const glm::vec2& position, const glm::vec2& size, const Color& color)
@@ -142,6 +141,11 @@ namespace rym
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const Color& color)
 	{
 		s_PolygonsBatching->DrawQuad(transform, texture, color);
+	}
+
+	void Renderer2D::DrawCircle(const glm::mat4& transform, const Color& color, int layer, int ID)
+	{
+		s_PolygonsBatching->DrawCircle(transform, color, layer, ID);
 	}
 
 	void Renderer2D::DrawCircle(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer, int ID)
