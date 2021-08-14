@@ -17,8 +17,8 @@ namespace rym
 		void Render();
 		void SetSceneEntitySelectedCallback(std::function<void(const std::shared_ptr<Entity>&)> fun);
 		//std::function<void(const std::shared_ptr<Entity>&)>
-	private:
 		PropertiesPanel m_PropertiesPanel;
+	private:
 		void AddNode(std::shared_ptr<Entity> entity, size_t id);
 
 		std::shared_ptr<Entity> m_SelectedEntity = nullptr;

@@ -298,31 +298,26 @@ namespace rym
 
 	void Scene::OnUpdateGame(float _delta)
 	{
-		Camera* mainCamera = nullptr;
-		TransformComponent* mainCameraTransform = nullptr;
-		// Looking for the current cameras (Camera2D)
-		{
-			for (auto& e : m_Entitys)
-			{
-				if (e->HaveComponent<CameraComponent>())
-				{
-					auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
-					//static CameraComponent* previusCamera = nullptr;
-					// Get the first current camera
-					if (e->visible && camera->current)
-					{
-						mainCamera = &camera->camera;
-						mainCameraTransform = transform;
-						break;
-					}
-				}
-			}
-		}
-
-		if (mainCamera)
-		{
-			Renderer2D::Begin(*mainCamera, *mainCameraTransform);
-		}
+		//Camera* mainCamera = nullptr;
+		//TransformComponent* mainCameraTransform = nullptr;
+		//// Looking for the current cameras (Camera2D)
+		//{
+		//	for (auto& e : m_Entitys)
+		//	{
+		//		auto [transform, camera] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<CameraComponent>());
+		//		if (camera)
+		//		{
+		//			//static CameraComponent* previusCamera = nullptr;
+		//			// Get the first current camera
+		//			if (e->visible && camera->current)
+		//			{
+		//				mainCamera = &camera->camera;
+		//				mainCameraTransform = transform;
+		//				break;
+		//			}
+		//		}
+		//	}
+		//}
 
 		for (auto& e : m_Entitys)
 		{
@@ -343,8 +338,9 @@ namespace rym
 				}
 			}
 
-			if (mainCamera)
+			if (m_MainCamera)
 			{
+				Renderer2D::Begin(m_MainCamera->camera, *m_MainCameraTransform);
 				auto [transform, sprite, polygonShape] = std::make_tuple(e->GetComponent<TransformComponent>(), e->GetComponent<SpriteComponent>(), e->GetComponent<PolygonShapeComponent>());
 				if (e->visible && sprite)
 				{
@@ -356,29 +352,14 @@ namespace rym
 					if (polygonShape->points.size() > 0)
 						Renderer2D::DrawPolygon(polygonShape->points, transform->GetTransform(), polygonShape->color, polygonShape->layer, e->ID);
 				}
+				Renderer2D::End();
 			}
-		}
-
-		if (mainCamera)
-		{
-			Renderer2D::End();
 		}
 	}
 
 	void Scene::OnQuitGame()
 	{
-		/* Its a temporal solution, later I will create a backupsystem when the scene is on game mode*/
-		//RYM_INFO("Salio");
-		for (size_t i = 0; i < m_Entitys.size(); i++)
-		{
-			/*
-			for (auto e : m_ScriptingEntitys) {
-				if (m_Entitys[i]->ID == e->ID)
-					m_Entitys[i] = std::move(e);
-			}
-			*/
-		}
-		//m_Entitys = std::move(m_EntitysBackup);
+
 	}
 
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
@@ -393,5 +374,18 @@ namespace rym
 				camera->camera.Resize(m_Size.x / m_Size.y);
 			}
 		}
+	}
+
+	void Scene::SetMainCamera(const std::shared_ptr<Entity>& entity)
+	{
+		if (m_MainCamera)
+		{
+			if (!m_MainCamera->current) { m_MainCamera = nullptr; return; }
+			m_MainCamera->current = false;
+		}
+		auto [transform, camera] = std::make_tuple(entity->GetComponent<TransformComponent>(), entity->GetComponent<CameraComponent>());
+		m_MainCamera = camera;
+		m_MainCamera->current = true;
+		m_MainCameraTransform = transform;
 	}
 }

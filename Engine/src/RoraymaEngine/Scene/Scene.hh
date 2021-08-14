@@ -35,13 +35,17 @@ namespace rym
 		void OnQuitGame();
 		void OnViewportResize(uint32_t width, uint32_t height);
 
+		void SetMainCamera(const std::shared_ptr<Entity>& entity);
+
 		std::string Name = "Untitle";
 	private:
 		std::shared_ptr<Entity> CreateEmptyEntity(const std::string_view& name);
 		std::string CheckEntitysName(const std::string_view& name);
-		CameraComponent* GetFirstCamera();
 
 	private:
+		CameraComponent* m_MainCamera = nullptr;
+		TransformComponent* m_MainCameraTransform = nullptr;
+
 		glm::vec2 m_Size;
 
 		std::vector<std::shared_ptr<Entity>> m_Entitys;

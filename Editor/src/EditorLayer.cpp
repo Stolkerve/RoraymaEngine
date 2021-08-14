@@ -12,8 +12,12 @@ void EditorLayer::OnStart()
 	m_Scenes.push_back(std::make_shared<Scene>("TestScene"));
 	//m_SelectedScene = &m_Scenes.back(); // More later
     m_EntitysPanel.SetContext(m_Scenes.back());
-    m_EntitysPanel.SetSceneEntitySelectedCallback([this](const std::shared_ptr<Entity> newEntitySelected) {
+    m_EntitysPanel.SetSceneEntitySelectedCallback([this](const std::shared_ptr<Entity>& newEntitySelected) {
         m_EntitySelected = newEntitySelected;
+        });
+
+    m_EntitysPanel.m_PropertiesPanel.SetSetMainCameraCallback([this](const std::shared_ptr<Entity>& newEntitySelected) {
+        m_Scenes.back()->SetMainCamera(newEntitySelected);
         });
 
 	// Buhhhh use std::bind. Labmdas > std::bind

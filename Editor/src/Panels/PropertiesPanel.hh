@@ -21,7 +21,9 @@ namespace rym
 
 		void Render();
 
+		void SetSetMainCameraCallback(std::function<void(const std::shared_ptr<Entity>&)> fun);
 	private:
+		std::function<void(const std::shared_ptr<Entity>&)> m_SetMainCameraCallback;
 		//std::shared_ptr<Entity> m_EntitySelected = nullptr;
 		std::shared_ptr<Scene> m_CurrentScene;
 		//TransformComponent* m_EntityTransform;

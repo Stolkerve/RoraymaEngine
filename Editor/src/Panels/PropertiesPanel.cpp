@@ -70,7 +70,10 @@ namespace rym
 				{
 					if (!DeleteComponent<CameraComponent>(m_EntitySelected.entity))
 					{
-						DrawCheckBox("Current", &m_EntitySelected.cameraComponent->current);
+						if (DrawCheckBox("Current", &m_EntitySelected.cameraComponent->current))
+						{
+							m_SetMainCameraCallback(m_EntitySelected.entity);
+						}
 						//float preOrthoSize = camera->Camera.GetOrthoSize();
 						//float orthoSize = preOrthoSize;
 						if (DrawDragFloat("OrthoSize", m_EntitySelected.cameraComponent->camera.m_OrthoSize, 1.f, 500.f))
@@ -213,5 +216,10 @@ namespace rym
 			}
 		}
 		ImGui::End();
+	}
+
+	void PropertiesPanel::SetSetMainCameraCallback(std::function<void(const std::shared_ptr<Entity>&)> fun)
+	{
+		m_SetMainCameraCallback = fun;
 	}
 }
