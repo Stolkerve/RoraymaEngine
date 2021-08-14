@@ -22,6 +22,7 @@ namespace rym
 		{
 			m_SelectedEntity = entity;
 			m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+			m_SetSceneEntitySelected(m_SelectedEntity);
 		}
 
 		if (ImGui::IsItemHovered())

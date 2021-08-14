@@ -127,12 +127,18 @@ namespace rym
 			static glm::vec2* lastPointClicked = nullptr;
 			for (auto& p : polygonShape->points)
 			{
-				auto pos = p + transform->translation;
-				Renderer2D::DrawCircle(pos, { circleSize , circleSize }, Color::NICE_BLUE, 22, entity->ID);
+				auto pos = (p * transform->scale) + (transform->translation);
+
+				auto posTransform = glm::translate(glm::mat4(1.0f), glm::vec3(transform->translation, 0.f))
+					* glm::rotate(glm::mat4(1.f), glm::radians(transform->rotation), { 0.f, 0.f, 1.f })
+					* glm::translate(glm::mat4(1.0f), glm::vec3(pos - transform->translation, 0.f))
+					* glm::scale(glm::mat4(1.0f), glm::vec3(circleSize, circleSize, 0.0f));
+
+				Renderer2D::DrawCircle(posTransform, Color::NICE_BLUE, 22, entity->ID);
 				if (Input::IsButtonPressed(MouseCode::ButtonLeft))
 				{
 					auto m = Input::GetCursorWorldPosition();
-					if (PointCircle(m.x, m.y, pos.x, pos.y, circleSize / 2.f) && lastPointClicked == nullptr)
+					if (PointCircle(m.x, m.y, posTransform[3][0], posTransform[3][1], circleSize / 2.f) && lastPointClicked == nullptr)
 					{
 						lastPointClicked = &p;
 					}

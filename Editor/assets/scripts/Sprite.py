@@ -8,10 +8,14 @@ class Sprite(PyScripting.PyScript):
 	def OnStart(self):
 		self.transform = self.entity.GetTransformComponent()
 	def OnUpdate(self, _delta):
-		self.transform.position.x += 0.1
+		if(Input.IsKeyPressed(Input.KeyCode.D)):
+			self.transform.position.x += 0.1
+		if(Input.IsKeyPressed(Input.KeyCode.A)):
+			self.transform.position.x -= 0.1
 		pass
 	def OnQuit(self):
 		pass
+
 
 
 

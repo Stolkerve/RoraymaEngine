@@ -63,6 +63,7 @@ namespace rym
 			auto transform = entity->GetComponent<TransformComponent>();
 			out << YAML::Key << "Position" << YAML::Value << transform->translation;
 			out << YAML::Key << "Scale" << YAML::Value << YAML::Value << transform->scale;
+			out << YAML::Key << "FakeScale" << YAML::Value << YAML::Value << transform->fakeScale;
 			out << YAML::Key << "Rotation" << YAML::Value << transform->rotation;
 			out << YAML::EndMap;
 		}
@@ -170,10 +171,12 @@ namespace rym
 
 					const auto position = serializeTransform["Position"];
 					const auto scale = serializeTransform["Scale"];
+					const auto fakeScale = serializeTransform["FakeScale"];
 					const auto rotation = serializeTransform["Rotation"].as<float>();
 
 					entityTransformComponent->translation = { position[0].as<float>(), position[1].as<float>()};
 					entityTransformComponent->scale = { scale[0].as<float>(), scale[1].as<float>() };
+					entityTransformComponent->fakeScale = { fakeScale[0].as<float>(), fakeScale[1].as<float>() };
 					entityTransformComponent->rotation = rotation;
 				}
 

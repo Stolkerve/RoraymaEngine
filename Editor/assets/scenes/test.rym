@@ -1,0 +1,34 @@
+Scene: TestScene
+Entitys:
+  - Entity: Empty_Entity
+    TransformComponent:
+      Position: [-289.36554, -636.523132]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 360
+  - Entity: Sprite
+    TransformComponent:
+      Position: [-710.219604, 527.728149]
+      Scale: [754.493408, 943.230652]
+      FakeScale: [724.493408, 913.230652]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: carita
+      TexturePath: C:\Dev\RoraymaEngine\Editor\assets\Textures\carita.png
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false
+    PyScriptComponent:
+      FilePath: C:\Dev\RoraymaEngine\Editor\assets\scripts\Sprite.py
+      ModuleName: Sprite
+  - Entity: Camera
+    TransformComponent:
+      Position: [199.350067, 14.7667503]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+    CameraComponent:
+      Current: true
+      Camera2D:
+        AspectRatio: 1.39834714
+        OrthoSize: 2061
