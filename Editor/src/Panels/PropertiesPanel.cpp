@@ -39,7 +39,7 @@ namespace rym
 				ImGui::Separator();
 
 
-				if (ImGui::CollapsingHeader(ICON_FA_EXPAND_ARROWS_ALT"  Transfrom", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_EXPAND_ARROWS_ALT"  Transfrom Component", headerFlags))
 				{
 					static bool changed = false;
 					//RYM_INFO("{0}. Antes de referenciar", transfrom->Translation);
@@ -66,7 +66,7 @@ namespace rym
 			{
 				ImGui::Separator();
 
-				if (ImGui::CollapsingHeader(ICON_FA_VIDEO"  Camera", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_VIDEO"  Camera Component", headerFlags))
 				{
 					if (!DeleteComponent<CameraComponent>(m_EntitySelected.entity))
 					{
@@ -88,7 +88,7 @@ namespace rym
 			{
 				ImGui::Separator();
 
-				if (ImGui::CollapsingHeader(ICON_FA_GHOST"  Sprite", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_GHOST"  Sprite Component", headerFlags))
 				{
 					if (!DeleteComponent<SpriteComponent>(m_EntitySelected.entity))
 					{
@@ -112,7 +112,7 @@ namespace rym
 			{
 				ImGui::Separator();
 
-				if (ImGui::CollapsingHeader(ICON_FA_CODE"  PyScripts", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_CODE"  PyScripts Component", headerFlags))
 				{
 					if (!DeleteComponent<PyScriptComponent>(m_EntitySelected.entity))
 					{
@@ -171,18 +171,34 @@ namespace rym
 			{
 				ImGui::Separator();
 
-				if (ImGui::CollapsingHeader(ICON_FA_DRAW_POLYGON"  PolygonShape", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_DRAW_POLYGON"  PolygonShape Component", headerFlags))
 				{
 					if (!DeleteComponent<PolygonShapeComponent>(m_EntitySelected.entity))
 					{
 						DrawArrayVec2(m_EntitySelected.polygonShapeComponent->points);
-						//auto windowWidth = ImGui::GetWindowSize().x;
-						//auto textWidth = ImGui::CalcTextSize(ICON_FA_PLUS" Add point").x;
-						//ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 					}
 					else m_EntitySelected.polygonShapeComponent = nullptr;
 					ImGui::Spacing();
 					DrawColorPicker4("Color", glm::value_ptr(m_EntitySelected.polygonShapeComponent->color.rgba));
+				}
+			}
+			
+			if (m_EntitySelected.textComponent)
+			{
+				ImGui::Separator();
+
+				if (ImGui::CollapsingHeader(ICON_FA_FEATHER_ALT"  Text Component", headerFlags))
+				{
+					if (!DeleteComponent<TextComponent>(m_EntitySelected.entity))
+					{
+						DrawVec2("Position", m_EntitySelected.textComponent->pos);
+						DrawVec2("Scale", m_EntitySelected.textComponent->scale, 0.1f, 1.f);
+						ImGui::Text("Text");
+						StdInputTextMultiline("##textcomponent", &m_EntitySelected.textComponent->text, { -FLT_MIN, 0 });
+					}
+					else m_EntitySelected.textComponent = nullptr;
+					ImGui::Spacing();
+					DrawColorPicker4("Color", glm::value_ptr(m_EntitySelected.textComponent->color.rgba));
 				}
 			}
 

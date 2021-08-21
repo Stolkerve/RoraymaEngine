@@ -8,6 +8,39 @@ namespace rym
 {
 	namespace api
 	{
+		enum class TextParam
+		{
+			LINEAR = 0x2601,
+			CLAMP_TO_EDGE = 0x812F,
+			NEAREST = 0x2600,
+			REPEAT = 0x2901
+		};
+
+		enum class TextFormat
+		{
+			RGBA = 0x1908,
+			RGB = 0x1907,
+			RED = 0x1903
+		};
+
+		enum class TextInternalFormat
+		{
+			RGBA8 = 0x8058,
+			RGB8 = 0x8051,
+			RED8 = 0x8229
+		};
+
+		struct TexConfig
+		{
+			int minFilter = static_cast<int>(TextParam::LINEAR);
+			int magFilter = static_cast<int>(TextParam::NEAREST);
+			int wrapS = static_cast<int>(TextParam::REPEAT);
+			int wrapT = static_cast<int>(TextParam::REPEAT);
+
+			int format = static_cast<int>(TextFormat::RGBA);
+			int internalFormat = static_cast<int>(TextInternalFormat::RGBA8);
+		};
+
 		class Texture
 		{
 		public:
@@ -27,8 +60,8 @@ namespace rym
 		class Texture2D : public Texture
 		{
 		public:
-			Texture2D(const std::string_view& path);
-			Texture2D(uint32_t width, uint32_t height);
+			Texture2D(const std::string_view& path, TexConfig config = {});
+			Texture2D(uint32_t width, uint32_t height, uint32_t* data, TexConfig config = {});
 			~Texture2D();
 
 			virtual uint32_t GetWidth() const override { return m_Width; };
@@ -38,8 +71,6 @@ namespace rym
 			virtual void Bind(uint32_t slot) const override;
 			virtual void UnBind() const override;
 			virtual bool operator==(const Texture& t) override;
-
-			void SetData(uint32_t* data);
 
 			uint32_t GetID() { return m_ID; }
 			std::string GetPath() { return m_Path; };

@@ -41,4 +41,10 @@ namespace rym
     {
         return PolygonShapeComponentType;
     }
+
+    static ComponentType TextComponentType = typeid(TextComponent).hash_code();
+    ComponentType TextComponent::GetType()
+    {
+        return ComponentType();
+    }
 }

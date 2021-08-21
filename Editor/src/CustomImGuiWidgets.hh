@@ -57,4 +57,10 @@ namespace rym {
 	std::pair<bool, std::string> DrawTextInput(const char* name, std::string& target, int max);
 
 	void DrawArrayVec2(std::vector<glm::vec2>& vectors);
+
+	bool StdInputText(const char* label, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+
+	bool StdInputTextMultiline(const char* label, std::string* str, const ImVec2& size = ImVec2(0, 0), ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
+
+	bool StdInputTextWithHint(const char* label, const char* hint, std::string* str, ImGuiInputTextFlags flags = 0, ImGuiInputTextCallback callback = NULL, void* user_data = NULL);
 }

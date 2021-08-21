@@ -50,22 +50,20 @@ namespace rym
 
 		return std::string(name);
 */
-		//auto NumOfCopias = [](uint32_t value) {
-		//    std::stringstream ss;
-		//    ss << "_" << value;
-		//    return ss.str();
-		//};
 
-		//uint32_t counter = 0;
+		int counter = 0;
 
-		//for (auto& e : m_Entitys)
-		//{
-		//    if (e->Tag == name.data() || (std::string(name) + NumOfCopias(counter)) == e->Tag)
-		//        counter++;
-		//}
+		for (auto& e : m_Entitys)
+		{
+		    if (e->Tag == name.data() || e->Tag == (name.data() + std::to_string(counter)))
+		        counter++;
+		}
 
-		//if (counter)
-		//    return std::string(name) + NumOfCopias(counter);
+		if (counter)
+		    return name.data() + std::to_string(counter);
+
+		// {name5, name3, name7} if name7 == name then name + 8 
+
 		return std::string(name);
 	}
 
@@ -134,6 +132,20 @@ namespace rym
 		m_Entitys.insert(m_Entitys.begin() + where, ptr);
 	}
 
+	void Scene::CreateSprite(const std::string_view& name)
+	{
+		auto ptr = CreateEmptyEntity(name);
+
+		std::string line = "Sprite ";
+		line += ptr->Tag;
+		line += " Created";
+
+		ptr->AddComponent<TransformComponent>();
+		ptr->AddComponent<SpriteComponent>(Color::WHITE);
+
+		m_Entitys.push_back(ptr);
+	}
+
 	void Scene::CreateSprite(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
@@ -149,16 +161,16 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateSprite(const std::string_view& name)
+	void Scene::CreateCamera(const std::string_view& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
-		std::string line = "Sprite ";
+		std::string line = "Camera ";
 		line += ptr->Tag;
 		line += " Created";
 
 		ptr->AddComponent<TransformComponent>();
-		ptr->AddComponent<SpriteComponent>(Color::WHITE);
+		ptr->AddComponent<CameraComponent>(m_Size.x / m_Size.y);
 
 		m_Entitys.push_back(ptr);
 	}
@@ -178,7 +190,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateCamera(const std::string_view& name)
+	void Scene::CreatePolygonShape(const std::string_view& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
@@ -187,7 +199,36 @@ namespace rym
 		line += " Created";
 
 		ptr->AddComponent<TransformComponent>();
-		ptr->AddComponent<CameraComponent>(m_Size.x / m_Size.y);
+		ptr->AddComponent<PolygonShapeComponent>();
+
+		m_Entitys.push_back(ptr);
+	}
+
+	void Scene::CreatePolygonShape(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	{
+		auto ptr = CreateEmptyEntity(name);
+		retrivedEntity = ptr;
+
+		std::string line = "Camera ";
+		line += ptr->Tag;
+		line += " Created";
+
+		ptr->AddComponent<TransformComponent>();
+		ptr->AddComponent<PolygonShapeComponent>();
+
+		m_Entitys.push_back(ptr);
+	}
+
+	void Scene::CreateText(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	{
+		auto ptr = CreateEmptyEntity(name);
+		retrivedEntity = ptr;
+
+		std::string line = "Camera ";
+		line += ptr->Tag;
+		line += " Created";
+
+		ptr->AddComponent<TextComponent>();
 
 		m_Entitys.push_back(ptr);
 	}
@@ -205,8 +246,10 @@ namespace rym
 			{
 				// Recover the ID back to the queue
 				m_AvailableEntities.push(e->ID);
-
+				//auto& ent = *(m_Entitys.begin() + i);
 				m_Entitys.erase(m_Entitys.begin() + i);
+				//if(ent != nullptr)
+				//	ent.reset(); // force the delete of the entity
 				return;
 			}
 			i++;
@@ -238,51 +281,67 @@ namespace rym
 		float camSize = std::clamp(editorCamera.GetZoomLevel() * 0.1f, 50.f, 500.f);
 		for (auto& e : m_Entitys)
 		{
-			if (e->NumOfComponents() == 1)
+			if (e)
 			{
-				auto transform = e->GetComponent<TransformComponent>();
-				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("GhostEditor"), Color::WHITE, 21, e->ID);
-			}
+				auto [transform, script, sprite, camera, polygonShape, textComponent] = std::make_tuple(
+					e->GetComponent<TransformComponent>(),
+					e->GetComponent<PyScriptComponent>(),
+					e->GetComponent<SpriteComponent>(),
+					e->GetComponent<CameraComponent>(),
+					e->GetComponent<PolygonShapeComponent>(),
+					e->GetComponent<TextComponent>()
+				);
 
-			auto [transform, script, sprite, camera, polygonShape] = std::make_tuple(
-				e->GetComponent<TransformComponent>(),
-				e->GetComponent<PyScriptComponent>(),
-				e->GetComponent<SpriteComponent>(),
-				e->GetComponent<CameraComponent>(),
-				e->GetComponent<PolygonShapeComponent>()
-			);
-
-			if (script)
-			{
-				if (script->ptr && script->start)
+				if (e->NumOfComponents() == 1 && transform)
 				{
-					script->start = false;
+					auto transform = e->GetComponent<TransformComponent>();
+					Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("GhostEditor"), Color::WHITE, 21, e->ID);
 				}
-			}
 
-			if (sprite)
-			{
-				// Only in the editor, when a sprite have a texture, the y axis invert because yes.
-				Renderer2D::DrawSprite(sprite, transform, e->ID);
-			}
+				if (script)
+				{
+					if (script->ptr && script->start)
+					{
+						script->start = false;
+					}
+				}
 
-			if (camera)
-			{
-				Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
-				float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
-				float top = camera->camera.GetOrthoSize() * 2.f;
-				Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::NICE_BLUE, 21);
-			}
+				if (sprite)
+				{
+					// Only in the editor, when a sprite have a texture, the y axis invert because yes.
+					Renderer2D::DrawSprite(sprite, transform, e->ID);
+				}
 
-			if (polygonShape)
-			{
-				if(polygonShape->points.size() > 0)
-					Renderer2D::DrawPolygon(polygonShape->points, transform->GetTransform(), polygonShape->color, polygonShape->layer, e->ID);
+				if (polygonShape)
+				{
+					if (polygonShape->points.size() > 0)
+						Renderer2D::DrawPolygon(polygonShape->points, transform->GetTransform(), polygonShape->color, polygonShape->layer, e->ID);
+				}
+
+				if (camera)
+				{
+					Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("CameraEditor"), Color::WHITE, 21, e->ID);
+					float right = (camera->camera.GetOrthoSize() * camera->camera.GetAspectRatio()) * 2.f;
+					float top = camera->camera.GetOrthoSize() * 2.f;
+					Renderer2D::DrawWiredQuad(transform->translation, { right , top }, Color::NICE_BLUE, 21);
+				}
 			}
 		}
 
 		Renderer2D::EndWire();
 		Renderer2D::End();
+
+		Renderer2D::BeginText(editorCamera);
+		for (auto& e : m_Entitys)
+		{
+			if (e)
+			{
+				auto textComponent = e->GetComponent<TextComponent>();
+				if (textComponent)
+					Renderer2D::DrawText_(textComponent);
+			}
+		}
+		Renderer2D::EndText();
 	}
 
 	void Scene::OnStartGame()

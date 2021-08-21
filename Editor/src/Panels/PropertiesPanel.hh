@@ -35,6 +35,7 @@ namespace rym
 			SpriteComponent* spriteComponent;
 			PyScriptComponent* pyScriptComponent;
 			PolygonShapeComponent* polygonShapeComponent;
+			TextComponent* textComponent;
 
 			EntitySelected& operator=(const std::shared_ptr<Entity>& other) {
 				this->entity = other;
@@ -45,6 +46,7 @@ namespace rym
 					this->spriteComponent = other->GetComponent<SpriteComponent>();
 					this->pyScriptComponent = other->GetComponent<PyScriptComponent>();
 					this->polygonShapeComponent = other->GetComponent<PolygonShapeComponent>();
+					this->textComponent = other->GetComponent<TextComponent>();
 				}
 				return *this;
 			}

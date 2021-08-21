@@ -40,7 +40,9 @@ namespace rym
 			if (ImGui::MenuItem(ICON_FA_TRASH"  Delete entity"))
 			{
 				m_CurrentScene->DeleteEntity(hoveredEntity->Tag);
+				m_SelectedEntity = nullptr;
 				m_PropertiesPanel.EntityClicked(nullptr);
+				m_SetSceneEntitySelected(nullptr);
 			}
 			ImGui::EndPopup();
 		}
@@ -120,6 +122,18 @@ namespace rym
 			if (ImGui::MenuItem("Add Camera"))
 			{
 				m_CurrentScene->CreateCamera("Camera", m_SelectedEntity);
+				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+				m_SetSceneEntitySelected(m_SelectedEntity);
+			}
+			if (ImGui::MenuItem("Add PolygonShape"))
+			{
+				m_CurrentScene->CreatePolygonShape("Polygon", m_SelectedEntity);
+				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
+				m_SetSceneEntitySelected(m_SelectedEntity);
+			}
+			if (ImGui::MenuItem("Add Text"))
+			{
+				m_CurrentScene->CreateText("Text", m_SelectedEntity);
 				m_PropertiesPanel.EntityClicked(m_SelectedEntity);
 				m_SetSceneEntitySelected(m_SelectedEntity);
 			}

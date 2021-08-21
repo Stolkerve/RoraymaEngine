@@ -9,10 +9,27 @@ namespace rym
 
 	static Polygons* s_PolygonsBatching;
 	static WirePolygons* s_WirePolygonsBatching;
+	//static TextRenderer* s_TextRendererBathcing;
+
+	Renderer2D::Renderer2DData Renderer2D::m_Data;
 
 	void Renderer2D::Init()
 	{
 		AssetsManager::PushShader("TextureShader", "assets/shaders/TextureShader.glsl");
+		AssetsManager::PushShader("TextShader", "assets/shaders/TextShader.glsl");
+		m_Data.textureShader = AssetsManager::GetShader("TextureShader");
+		m_Data.textShader = AssetsManager::GetShader("TextShader");
+
+		std::array<int32_t, 32 /*max samplers*/> samplers{};
+		std::iota(samplers.begin(), samplers.end(), 0);
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformIntArray("u_Textures", samplers.data(), 32);
+		m_Data.textureShader->UnBind();
+
+		m_Data.textShader->Bind();
+		m_Data.textShader->SetUniformIntArray("u_Textures", samplers.data(), 32);
+		m_Data.textShader->UnBind();
+
 		uint32_t whiteTextureData = 0xffffffff;
 		AssetsManager::PushTexture("WhiteTexture", 1, 1, &whiteTextureData);
 		AssetsManager::PushTexture("CameraEditor", "assets/Textures/camera.png");
@@ -20,6 +37,7 @@ namespace rym
 
 		s_PolygonsBatching = new Polygons;
 		s_WirePolygonsBatching = new WirePolygons;
+		//s_TextRendererBathcing = new TextRenderer;
 	}
 
 	void Renderer2D::Shutdown()
@@ -30,54 +48,89 @@ namespace rym
 
 	void Renderer2D::Begin(const glm::mat4& projection)
 	{
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformMat4f("u_ViewProjection", projection);
 		s_PolygonsBatching->Begin(projection);
 	}
 
 	void Renderer2D::Begin(const EditorCamera& editorCam)
 	{
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformMat4f("u_ViewProjection", editorCam.GetViewProjectionMatrix());
 		s_PolygonsBatching->Begin(editorCam.GetViewProjectionMatrix());
 	}
 
 
 	void Renderer2D::Begin(const Camera& camera, const TransformComponent& transform)
 	{
-		//glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(transform);
 		auto trasnformMatrix = glm::translate(glm::mat4(1.f), glm::vec3(transform.translation, 0.f)) *
 			glm::toMat4(glm::quat(glm::vec3(0.f, 0.f, glm::radians(transform.rotation))));
 
-
-		//glm::mat4 viewProjection = camera.GetProjection() * trasnformMatrix;
 		glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(trasnformMatrix);
 
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformMat4f("u_ViewProjection", viewProjection);
 		s_PolygonsBatching->Begin(viewProjection);
 	}
 
 	void Renderer2D::BeginWire(const EditorCamera& editorCam)
 	{
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformMat4f("u_ViewProjection", editorCam.GetViewProjectionMatrix());
+
 		s_WirePolygonsBatching->Begin(editorCam.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::BeginWire(const Camera& camera, const TransformComponent& transform)
 	{
-		//glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(transform);
 		auto trasnformMatrix = glm::translate(glm::mat4(1.f), glm::vec3(transform.translation, 0.f)) *
 			glm::toMat4(glm::quat(glm::vec3(0.f, 0.f, glm::radians(transform.rotation))));
 
-
-		//glm::mat4 viewProjection = camera.GetProjection() * trasnformMatrix;
 		glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(trasnformMatrix);
 
+		m_Data.textureShader->Bind();
+		m_Data.textureShader->SetUniformMat4f("u_ViewProjection", viewProjection);
+
 		s_WirePolygonsBatching->Begin(viewProjection);
+	}
+
+	void Renderer2D::BeginText(const EditorCamera& editorCam)
+	{
+		m_Data.textShader->Bind();
+		m_Data.textShader->SetUniformMat4f("u_ViewProjection", editorCam.GetViewProjectionMatrix());
+
+		s_PolygonsBatching->Begin(editorCam.GetViewProjectionMatrix());
+	}
+
+	void Renderer2D::BeginText(const Camera& camera, const TransformComponent& transform)
+	{
+		auto trasnformMatrix = glm::translate(glm::mat4(1.f), glm::vec3(transform.translation, 0.f)) *
+			glm::toMat4(glm::quat(glm::vec3(0.f, 0.f, glm::radians(transform.rotation))));
+
+		glm::mat4 viewProjection = camera.GetProjection() * glm::inverse(trasnformMatrix);
+
+		m_Data.textShader->Bind();
+		m_Data.textShader->SetUniformMat4f("u_ViewProjection", viewProjection);
+
+		s_PolygonsBatching->Begin(viewProjection);
 	}
 
 	void Renderer2D::End()
 	{
 		s_PolygonsBatching->Flush();
+		//m_Data.textureShader->UnBind();
 	}
 
 	void Renderer2D::EndWire()
 	{
 		s_WirePolygonsBatching->Flush();
+		//m_Data.textureShader->UnBind();
+	}
+
+	void Renderer2D::EndText()
+	{
+		s_PolygonsBatching->Flush();
+		//m_Data.textShader->UnBind();
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Color& color, int ID)
@@ -186,5 +239,49 @@ namespace rym
 	void Renderer2D::DrawLine(const std::pair<glm::vec2, glm::vec2>& positions, const Color& color, int layer)
 	{
 		s_WirePolygonsBatching->DrawLine(positions, color, layer);
+	}
+
+	void Renderer2D::DrawText_(TextComponent* textComponent)
+	{
+		const auto &chars = textComponent->characters.GetCharactersMap();
+		auto posCopy = textComponent->pos;
+		posCopy.y -= textComponent->characters.GetMaxBearing().y;
+		// iterate through all characters
+
+		for (auto c: textComponent->text)
+		{
+			Character ch = chars.at(c);
+			if (c != '\n')
+			{
+
+				float xpos = posCopy.x + ch.bearing.x * textComponent->scale.x;
+				float ypos = posCopy.y - (ch.size.y - ch.bearing.y) * textComponent->scale.y;
+
+				float w = ch.size.x * textComponent->scale.x;
+				float h = ch.size.y * textComponent->scale.y;
+
+				glm::vec4 vertices[6] = {
+					{ xpos,     ypos + h,	0.0f, 0.0f },
+					{ xpos,     ypos,		0.0f, 1.0f },
+					{ xpos + w, ypos,		1.0f, 1.0f },
+
+					{ xpos,     ypos + h,	0.0f, 0.0f },
+					{ xpos + w, ypos,		1.0f, 1.0f },
+					{ xpos + w, ypos + h,	1.0f, 0.0f }
+				};
+				// 
+				// render glyph texture over quad
+				s_PolygonsBatching->DrawText_(vertices, ch.tex, textComponent->color, textComponent->layer, -1);
+				//DrawQuad({ xpos , ypos }, { w, -h }, ch.tex, textComponent->color, textComponent->layer, ID);
+
+				// now advance cursors for next glyph (note that advance is number of 1/64 pixels)
+				posCopy.x += (ch.advance >> 6) * textComponent->scale.x; // bitshift by 6 to get value in pixels (2^6 = 64)
+			}
+			else
+			{
+				posCopy.y -= textComponent->characters.GetMaxBearing().y * textComponent->scale.y;
+				posCopy.x = textComponent->pos.x;
+			}
+		}
 	}
 }

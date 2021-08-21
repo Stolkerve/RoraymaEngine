@@ -8,7 +8,7 @@ namespace rym
 	class SEOverlay
 	{
 	public:
-		void DrawOverlay(const std::shared_ptr<Entity>& entity, const EditorCamera& editorCamera, bool& blockSelectedEntity);
+		void DrawOverlay(std::weak_ptr<Entity> ent, const EditorCamera& editorCamera, bool& blockSelectedEntity);
 
 	private:
 		bool m_SpriteCir1 = false;

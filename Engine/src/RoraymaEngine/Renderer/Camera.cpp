@@ -121,7 +121,7 @@ namespace rym
 		m_ZoomLevel = std::max(m_ZoomLevel, 175.1111f);
 		//RYM_INFO(m_ZoomLevel);
 		*/
-		constexpr float MAX_ZOOM = 325.1111f;
+		constexpr float MAX_ZOOM = 165.f;
 
 		//auto speed = PanSpeed();
 		//auto mouse = Input::GetCursorPosition();
@@ -169,7 +169,7 @@ namespace rym
 	{
 		auto delta = m_MouseViewportDelta * 0.5f;
 		//RYM_INFO(delta);
-		glm::vec2 speed = { 1.f , 1.f };
+		glm::vec2 speed = { 1.2f , 1.2f };
 		m_Position += glm::vec3(delta.x * speed.x, delta.y * speed.y, 0.f) * -1.f;
 	}
 

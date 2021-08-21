@@ -153,7 +153,7 @@ namespace rym
 
 		void ShaderProgram::UnBind() const
 		{
-			glUseProgram(NULL);
+			glUseProgram(0);
 		}
 
 		void ShaderProgram::SetUniformInt(const std::string_view& name, int32_t value) const

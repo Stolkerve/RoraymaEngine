@@ -47,6 +47,7 @@ project "Editor"
 			"Glad",
 			"GLFW",
 			"ImGui",
+			"freetype",
 			"yaml-cpp",
 		}
 
@@ -59,6 +60,7 @@ project "Editor"
 			"GLFW",
 			"Glad",
 			"ImGui",
+			"freetype",
 			"yaml-cpp"
 		}
 

@@ -14,7 +14,7 @@ namespace rym
 			m_Data.texturesConteiner.insert({ name, newTex });
 			return newTex;
 		}
-
+		return GetTexture(name);
 		//RYM_CORE_ERROR(false, "ERROR: Cannot exists two o more textures with the same name and the extension is ignored. \nTexture: {0}\nPath: {1}", name, path);
 	}
 
@@ -23,8 +23,7 @@ namespace rym
 		auto it = m_Data.texturesConteiner.find(name);
 		if (it == m_Data.texturesConteiner.end())
 		{
-			m_Data.texturesConteiner.insert({ name, std::make_shared<api::Texture2D>(width, height) });
-			m_Data.texturesConteiner.at(name)->SetData(data);
+			m_Data.texturesConteiner.insert({ name, std::make_shared<api::Texture2D>(width, height, data) });
 			return;
 		}
 	}
@@ -39,6 +38,16 @@ namespace rym
 			return;
 		}
 	}
+
+/*	void AssetsManager::PushFont(const std::string& name, const std::string& path)
+	{
+		auto it = m_Data.charactersConteiner.find(name);
+		if (it == m_Data.charactersConteiner.end())
+		{
+			m_Data.charactersConteiner.insert({ name, std::make_shared<Characters>(path) });
+			return;
+		}
+	}*/
 
 	std::shared_ptr<api::Texture2D> AssetsManager::GetTexture(const std::string& name)
 	{
@@ -63,6 +72,18 @@ namespace rym
 
 		return m_Data.shadersConteiner.at(name);
 	}
+
+	//std::shared_ptr<Characters> AssetsManager::GetFont(const std::string& name)
+	//{
+	//	auto it = m_Data.charactersConteiner.find(name);
+	//	if (it == m_Data.charactersConteiner.end())
+	//	{
+	//		//RYM_CORE_ASSERT(false, "ERROR: Could not find the texture");
+	//		return nullptr;
+	//	}
+
+	//	return m_Data.charactersConteiner.at(name);
+	//}
 
 	void AssetsManager::DeleteTexture(const std::string& name)
 	{

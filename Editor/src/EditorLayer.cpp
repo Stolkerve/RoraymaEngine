@@ -48,10 +48,12 @@ void EditorLayer::OnEvent(const Event& event)
 
 void EditorLayer::RenderCartesianPlane()
 {
-	constexpr float maxFloat = std::numeric_limits<float>().max();
+	constexpr float maxFloat = std::numeric_limits<float>().max() * 0.5f;
+    //float maxFloat = m_EditorCamera.GetZoomLevel() * 2.5f;
 
-    Renderer::SetLineWidth(1.4f);
+    Renderer::SetLineWidth(2.f);
     Renderer2D::BeginWire(m_EditorCamera);
+
 	Renderer2D::DrawLine({ {-maxFloat, 0.f}, {maxFloat, 0.f} }, Color::GREEN, -21); // X axis
 	Renderer2D::DrawLine({ {0.f, -maxFloat}, {0.f, maxFloat} }, Color::RED, -21); // Y axis
     Renderer2D::EndWire();
@@ -382,15 +384,6 @@ void EditorLayer::OnImGui()
 
         uint32_t sceneTextID = m_FrameBuffer->GetColorAttachment();
         ImGui::Image((void*)sceneTextID, { m_ViewportSize.x, m_ViewportSize.y }, { 0, 1 }, { 1, 0 });
-
-        // gizmos
-        /*
-        {
-            ImDrawList* draw_list = ImGui::GetWindowDrawList();
-            //TODO: multiple the vertices by the viewmatrix of the editor camera
-            draw_list->AddRectFilled({ 100.f, 100.f }, { 200.f, 200.f }, ImColor({ 1.0f, 1.0f, 0.4f, 1.0f }));
-        }
-        */
 
         ImGui::EndTabItem();
         ImGui::EndTabBar();

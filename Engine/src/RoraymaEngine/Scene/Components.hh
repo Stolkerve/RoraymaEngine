@@ -11,6 +11,7 @@
 #include "../Renderer/Texture.hh"
 #include "../Renderer/Color.hh"
 #include "../Renderer/Camera.hh"
+#include "../Renderer/Characters.hh"
 
 namespace rym
 {
@@ -130,6 +131,21 @@ namespace rym
 		std::vector<glm::vec2> points;
 		rym::Color color = rym::Color::WHITE;
 		int layer = 0;
+		static ComponentType GetType();
+	};
+
+	struct TextComponent {
+		TextComponent() :
+			characters("assets/theme/fonts/Antonio-Bold.ttf")
+		{
+
+		}
+		Characters characters;
+		glm::vec2 pos = { 0.f, 0.f };
+		glm::vec2 scale = { 1.f, 1.f };
+		int layer = 0;
+		std::string text;
+		rym::Color color = rym::Color::WHITE;
 		static ComponentType GetType();
 	};
 }

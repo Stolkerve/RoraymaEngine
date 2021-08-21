@@ -42,6 +42,7 @@ project "Engine"
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.pybind11}",
+		"%{IncludeDir.freetype}",
 		pythonIncludePath,
 	}
 
@@ -63,6 +64,7 @@ project "Engine"
 			"Glad",
 			"ImGui",
 			"yaml-cpp",
+			"freetype",
 			"GL",
 		}
 		defines
@@ -79,6 +81,7 @@ project "Engine"
 			"Glad",
 			"ImGui",
 			"yaml-cpp",
+			"freetype",
 			"opengl32.lib"
 		}
 

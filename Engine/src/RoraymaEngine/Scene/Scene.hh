@@ -25,6 +25,9 @@ namespace rym
 		void CreateSprite(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity);
 		void CreateCamera(const std::string_view& name);
 		void CreateCamera(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity);
+		void CreatePolygonShape(const std::string_view& name);
+		void CreatePolygonShape(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity);
+		void CreateText(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity);
 		void DeleteEntity(const std::string_view& name);
 		std::shared_ptr<Entity> GetEntity(const std::string_view& name);
 		std::shared_ptr<Entity> GetEntity(uint32_t ID);
@@ -38,8 +41,8 @@ namespace rym
 		void SetMainCamera(const std::shared_ptr<Entity>& entity);
 
 		std::string Name = "Untitle";
-	private:
 		std::shared_ptr<Entity> CreateEmptyEntity(const std::string_view& name);
+	private:
 		std::string CheckEntitysName(const std::string_view& name);
 
 	private:

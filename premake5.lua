@@ -31,6 +31,7 @@ IncludeDir["ImGuiColorTextEdit"] = "%{wks.location}/Engine/vendor/ImGuiColorText
 IncludeDir["stb_image"] = "%{wks.location}/Engine/vendor/stb_image"
 IncludeDir["yaml_cpp"] = "%{wks.location}/Engine/vendor/yaml-cpp/include"
 IncludeDir["pybind11"] = "%{wks.location}/Engine/vendor/pybind11"
+IncludeDir["freetype"] = "%{wks.location}/Engine/vendor/freetype/include"
 
 group "Dependencies"
 	
@@ -38,6 +39,7 @@ group "Dependencies"
 	include "Engine/vendor/Glad"
 	include "Engine/vendor/imgui"
 	include "Engine/vendor/yaml-cpp"
+	include "Engine/vendor/freetype"
 group ""
 
 include "Engine"

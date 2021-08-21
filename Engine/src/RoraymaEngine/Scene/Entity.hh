@@ -71,6 +71,7 @@ namespace rym
 
 		~Entity()
 		{
+			RYM_INFO("{} deleted.", Tag);
 			for (auto& [first, secount] : m_Components)
 			{
 				delete secount;

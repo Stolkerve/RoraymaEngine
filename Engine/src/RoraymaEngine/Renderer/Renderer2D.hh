@@ -5,11 +5,18 @@
 #include "Texture.hh"
 #include "Color.hh"
 #include "BatchRendering.hh"
+#include "ShaderProgram.hh"
 #include "../Scene/Components.hh"
 
 namespace rym
 {
 	using namespace api;
+
+	enum class ShaderType
+	{
+		Texture,
+		Text
+	};
 
 	class Renderer2D
 	{
@@ -20,11 +27,18 @@ namespace rym
 		static void Begin(const glm::mat4& projection);
 		static void Begin(const EditorCamera& editorCam);
 		static void Begin(const Camera& camera, const TransformComponent& transform);
+
 		static void BeginWire(const EditorCamera& editorCam);
 		static void BeginWire(const Camera& camera, const TransformComponent& transform);
 
+		static void BeginText(const EditorCamera& editorCam);
+		static void BeginText(const Camera& camera, const TransformComponent& transform);
+
 		static void End();
+
 		static void EndWire();
+
+		static void EndText();
 
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Color& color, int ID = -1);
 		static void DrawQuad(const glm::vec2& position, const glm::vec2& size, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
@@ -45,5 +59,14 @@ namespace rym
 		static void DrawWiredPolygon(std::vector<glm::vec2>& vertices, const glm::vec2& position, const glm::vec2& size, const Color& color);
 		static void DrawWiredQuad(const glm::vec2& position, const glm::vec2& size, const Color& color, int layer = 0);
 		static void DrawWiredQuad(const glm::mat4& transform, const Color& color, int layer = 0);
+
+		static void DrawText_(TextComponent* textComponent);
+
+	private:
+		static struct Renderer2DData
+		{
+			std::shared_ptr<ShaderProgram> textureShader;
+			std::shared_ptr<ShaderProgram> textShader;
+		}m_Data;
 	};
 }

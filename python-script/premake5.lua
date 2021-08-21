@@ -17,7 +17,7 @@ function getPythonPath()
 	return p
 end
 
-pythonPath = getPythonPath()
+pythonPath = "C:/python"
 pythonIncludePath = pythonPath .. "/include"
 pythonLibPath = pythonPath .. "/libs"
 

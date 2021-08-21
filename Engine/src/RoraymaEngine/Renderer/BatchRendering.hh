@@ -6,9 +6,9 @@
 #include "Renderer.hh"
 #include "Camera.hh"
 #include "Color.hh"
-#include "ShaderProgram.hh"
 #include "Texture.hh"
 #include "UniformBuffer.hh"
+#include <map>
 
 namespace rym
 {
@@ -36,7 +36,11 @@ namespace rym
 			void reset();
 		};
 
-
+		/************************************/
+		/*									*/
+		/*		POLYGONS RENDERER			*/
+		/*									*/
+		/************************************/
 
 		class Polygons
 		{
@@ -46,6 +50,7 @@ namespace rym
 
 			void DrawQuad(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
+			void DrawText_(const glm::vec4* verticesPos, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
 			void DrawCircle(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawPolygon(const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawTriangle(const glm::mat4& transform, const Color& color, int ID = -1);
@@ -57,17 +62,16 @@ namespace rym
 
 		private:
 			const uint32_t m_MaxVertices = 20000;
-			const uint32_t m_MaxIndices = 20000;
+			//const uint32_t m_MaxIndices = 20000;
 			const uint32_t m_QuadVertexCount = 6;
 			const uint32_t m_TriangleVertexCount = 6;
 
 			std::shared_ptr<VertexArray> m_VertexArray;
 			std::shared_ptr<VertexBuffer> m_VertexBuffer;
-			std::shared_ptr<IndexBuffer> m_IndexBuffer;
-			std::shared_ptr<ShaderProgram> m_TextureShader;
+			//std::shared_ptr<IndexBuffer> m_IndexBuffer;
 
 			uint32_t m_VerticesCount = 0;
-			uint32_t m_IndicesCount = 0;
+			//uint32_t m_IndicesCount = 0;
 			uint32_t m_TextureSlotIndex = 1; // 0 = white texture
 			Vertex* m_VertexBufferAddress = nullptr; // This is the first position of the vertex buffer
 			Vertex* m_VertexBufferPtr = nullptr; // this point to the last element added to the vertex buffer, IS NOT THE END OF THE BUFFER
@@ -119,8 +123,6 @@ namespace rym
 			};
 		};
 
-		/*Use line loop that use less vertices*/
-
 		class WirePolygons
 		{
 		public:
@@ -138,7 +140,6 @@ namespace rym
 		private:
 			std::shared_ptr<VertexArray> m_VertexArray;
 			std::shared_ptr<VertexBuffer> m_VertexBuffer;
-			std::shared_ptr<ShaderProgram> m_TextureShader;
 
 			const uint32_t m_MaxVertices = 20000;
 			static const uint32_t m_MaxTextureSlots = 32;
@@ -153,5 +154,6 @@ namespace rym
 				{ 0.0f, 1.0f },
 			};
 		};
+
 	}
 }

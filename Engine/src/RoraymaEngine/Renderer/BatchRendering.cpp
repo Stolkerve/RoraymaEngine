@@ -4,7 +4,7 @@
 
 #include <future>
 #include <unordered_map>
-#include <ppl.h>
+
 namespace rym
 {
 	namespace api
@@ -39,41 +39,12 @@ namespace rym
 				});
 			m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
-			m_IndexBuffer = std::make_shared<IndexBuffer>(m_MaxIndices);
-			m_VertexArray->AddIndexBuffer(m_IndexBuffer);
-
 			// Init texture slots
-			std::array<int32_t, m_MaxTextureSlots> samplers{};
-			std::iota(samplers.begin(), samplers.end(), 0);
-
-			// Load shader
-			//AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
-			m_TextureShader = AssetsManager::GetShader("TextureShader");
-			m_TextureShader->Bind();
-			m_TextureShader->SetUniformIntArray("u_Textures", samplers.data(), m_MaxTextureSlots);
 
 			// Set first texture slot to 0
 			m_TextureSlots[0] = AssetsManager::GetTexture("WhiteTexture");
 
 			std::vector<glm::vec2> cirVertives;
-/*
-			m_CircleVertices.reserve(360);
-			float x, y;
-			for (double i = 0; i <= 360;) {
-				x = 5 * cos(i);
-				y = 5 * sin(i);
-				m_CircleVertices.push_back({ x, y });
-				i = i + .5;
-				x = 5 * cos(i);
-				y = 5 * sin(i);
-				m_CircleVertices.push_back({ x, y });
-				m_CircleVertices.push_back({ 0, 0 });
-				i = i + .5;
-			}
-
-			auto a = m_CircleVertices.data();
-*/
-
 
 			size_t segments = 30;
 			cirVertives.reserve(segments);
@@ -154,7 +125,45 @@ namespace rym
 			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
 		}
 
-		static std::mutex myMutex;
+		void Polygons::DrawText_(const glm::vec4* verticesPos, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer, int ID)
+		{
+			if (m_VerticesCount + m_QuadVertexCount >= m_MaxVertices)
+				NextBatch();
+
+			float textureIndex = 0.0f;
+			for (uint32_t i = 1; i < m_TextureSlotIndex; i++)
+			{
+				if (*m_TextureSlots[i] == *texture)
+				{
+					textureIndex = (float)i;
+					break;
+				}
+			}
+
+			if (textureIndex == 0.0f)
+			{
+				if (m_TextureSlotIndex >= m_MaxTextureSlots)
+					NextBatch();
+
+				textureIndex = (float)m_TextureSlotIndex;
+				m_TextureSlots[m_TextureSlotIndex] = texture;
+				m_TextureSlotIndex++;
+			}
+
+			for (size_t i = 0; i < m_QuadVertexCount; i++)
+			{
+				m_VertexBufferPtr->Position = glm::vec4(verticesPos[i].x, verticesPos[i].y, 0.f, 1.f);
+				m_VertexBufferPtr->Color = color.GetColor();
+				m_VertexBufferPtr->TexCoord = glm::vec2(verticesPos[i].z, verticesPos[i].w);
+				m_VertexBufferPtr->TexIndex = textureIndex;
+				m_VertexBufferPtr->Layer = float(layer);
+				m_VertexBufferPtr->EntityID = ID;
+				m_VertexBufferPtr++;
+			}
+
+			m_VerticesCount += m_QuadVertexCount;
+			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
+		}
 
 		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
@@ -290,8 +299,8 @@ namespace rym
 
 		void Polygons::Begin(const glm::mat4& viewProjectionMatrix)
 		{
-			m_TextureShader->Bind();
-			m_TextureShader->SetUniformMat4f("u_ViewProjection", viewProjectionMatrix);
+			//m_TextureShader->Bind();
+			//m_TextureShader->SetUniformMat4f("u_ViewProjection", viewProjectionMatrix);
 			BatchStatistics::Get().reset();
 
 			StartBatch();
@@ -327,9 +336,9 @@ namespace rym
 
 			// Load shader
 			//AssetsManager::PushShader("EditorShader", "assets/shaders/EditorShader.glsl");
-			m_TextureShader = AssetsManager::GetShader("TextureShader");
-			m_TextureShader->Bind();
-			m_TextureShader->SetUniformIntArray("u_Textures", samplers.data(), m_MaxTextureSlots);
+			//m_TextureShader = AssetsManager::GetShader("TextureShader");
+			//m_TextureShader->Bind();
+			//m_TextureShader->SetUniformIntArray("u_Textures", samplers.data(), m_MaxTextureSlots);
 		}
 
 		WirePolygons::~WirePolygons()
@@ -423,8 +432,8 @@ namespace rym
 
 		void WirePolygons::Begin(const glm::mat4& viewProjectionMatrix)
 		{
-			m_TextureShader->Bind();
-			m_TextureShader->SetUniformMat4f("u_ViewProjection", viewProjectionMatrix);
+			//m_TextureShader->Bind();
+			//m_TextureShader->SetUniformMat4f("u_ViewProjection", viewProjectionMatrix);
 			BatchStatistics::Get().reset();
 
 			StartBatch();
