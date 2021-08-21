@@ -1,0 +1,17 @@
+Scene: TestScene
+Entitys:
+  - Entity: Polygon
+    TransformComponent:
+      Position: [0, 0]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+    PolygonShapeComponent:
+      Color: [1, 1, 1, 1]
+      Layer: 0
+      Points:
+        - [-46.2809334, 79.3388824]
+        - [109.090919, 94.21492]
+        - [120.661118, -85.9504089]
+        - [-49.586792, -196.694199]
+        - [0, 0]

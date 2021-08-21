@@ -69,7 +69,7 @@ namespace rym
 		bool current = false;
 
 		Camera2D camera;
-
+		rym::Color color = rym::Color::WHITE; // implement its later
 		CameraComponent() = default;
 		CameraComponent(float aspecRatio) :
 			camera(aspecRatio) {}

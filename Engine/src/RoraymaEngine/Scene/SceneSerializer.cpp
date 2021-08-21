@@ -50,69 +50,94 @@ namespace rym
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity" << YAML::Value << entity->Tag;
-		/*
-			out << YAML::Key << "Position" << YAML::Value << transform->Translation;
-			out << YAML::Key << "Position" << YAML::Value << transform->Scale;
-			out << YAML::Key << "Position" << YAML::Value << transform->Rotation;
-		*/
 
-		if (entity->HaveComponent<TransformComponent>())
+		auto [transform, script, sprite, camera, polygonShape, textComponent] = std::make_tuple(
+			entity->GetComponent<TransformComponent>(),
+			entity->GetComponent<PyScriptComponent>(),
+			entity->GetComponent<SpriteComponent>(),
+			entity->GetComponent<CameraComponent>(),
+			entity->GetComponent<PolygonShapeComponent>(),
+			entity->GetComponent<TextComponent>()
+		);
+
+		if (transform)
 		{
 			out << YAML::Key << "TransformComponent";
 			out << YAML::BeginMap;
-			auto transform = entity->GetComponent<TransformComponent>();
-			out << YAML::Key << "Position" << YAML::Value << transform->translation;
-			out << YAML::Key << "Scale" << YAML::Value << YAML::Value << transform->scale;
-			out << YAML::Key << "FakeScale" << YAML::Value << YAML::Value << transform->fakeScale;
-			out << YAML::Key << "Rotation" << YAML::Value << transform->rotation;
+				//auto transform = entity->GetComponent<TransformComponent>();
+				out << YAML::Key << "Position" << YAML::Value << transform->translation;
+				out << YAML::Key << "Scale" << YAML::Value << YAML::Value << transform->scale;
+				out << YAML::Key << "FakeScale" << YAML::Value << YAML::Value << transform->fakeScale;
+				out << YAML::Key << "Rotation" << YAML::Value << transform->rotation;
 			out << YAML::EndMap;
 		}
 
-		if (entity->HaveComponent<SpriteComponent>())
+		if (sprite)
 		{
 			out << YAML::Key << "SpriteComponent";
 			out << YAML::BeginMap;
-			auto sprite = entity->GetComponent<SpriteComponent>();
-			const auto& texture = AssetsManager::GetTexture(sprite->texture);
-			if (texture.get())
-			{
-				out << YAML::Key << "TextureName" << YAML::Value << sprite->texture;
-				out << YAML::Key << "TexturePath" << YAML::Value << texture->GetPath();
-			}
-			else
-			{
-				out << YAML::Key << "TextureName" << YAML::Value << "null";
-				out << YAML::Key << "TexturePath" << YAML::Value << "null";
-			}
-			out << YAML::Key << "Color" << YAML::Value << YAML::Value << sprite->color.rgba;
-			out << YAML::Key << "FlipH" << YAML::Value << sprite->flipH;
-			out << YAML::Key << "FlipV" << YAML::Value << sprite->flipV;
+				//auto sprite = entity->GetComponent<SpriteComponent>();
+				const auto& texture = AssetsManager::GetTexture(sprite->texture);
+				if (texture.get())
+				{
+					out << YAML::Key << "TextureName" << YAML::Value << sprite->texture;
+					out << YAML::Key << "TexturePath" << YAML::Value << texture->GetPath();
+				}
+				else
+				{
+					out << YAML::Key << "TextureName" << YAML::Value << "null";
+					out << YAML::Key << "TexturePath" << YAML::Value << "null";
+				}
+				out << YAML::Key << "Color" << YAML::Value << YAML::Value << sprite->color.rgba;
+				out << YAML::Key << "FlipH" << YAML::Value << sprite->flipH;
+				out << YAML::Key << "FlipV" << YAML::Value << sprite->flipV;
+				out << YAML::Key << "Layer" << YAML::Value << sprite->layer;
 			out << YAML::EndMap;
 		}
 
-		if (entity->HaveComponent<CameraComponent>())
+		if (camera)
 		{
 			out << YAML::Key << "CameraComponent";
 			out << YAML::BeginMap;
-			auto camera = entity->GetComponent<CameraComponent>();
-
-			out << YAML::Key << "Current" << YAML::Value << camera->current;
-			out << YAML::Key << "Camera2D";
-			out << YAML::BeginMap;
-			out << YAML::Key << "AspectRatio" << YAML::Value << camera->camera.GetAspectRatio();
-			out << YAML::Key << "OrthoSize" << YAML::Value << camera->camera.GetOrthoSize();
-			out << YAML::EndMap;
-
+				//auto camera = entity->GetComponent<CameraComponent>();
+				out << YAML::Key << "Current" << YAML::Value << camera->current;
+				out << YAML::Key << "Camera2D";
+				out << YAML::BeginMap;
+					out << YAML::Key << "AspectRatio" << YAML::Value << camera->camera.GetAspectRatio();
+					out << YAML::Key << "OrthoSize" << YAML::Value << camera->camera.GetOrthoSize();
+				out << YAML::EndMap;
 			out << YAML::EndMap;
 		}
 
-		if (entity->HaveComponent<PyScriptComponent>())
+		if (script)
 		{
-			auto script = entity->GetComponent<PyScriptComponent>();
+			//auto script = entity->GetComponent<PyScriptComponent>();
 			out << YAML::Key << "PyScriptComponent";
 			out << YAML::BeginMap;
-			out << YAML::Key << "FilePath" << YAML::Value << script->filePath;
-			out << YAML::Key << "ModuleName" << YAML::Value << script->moduleName;
+				out << YAML::Key << "FilePath" << YAML::Value << script->filePath;
+				out << YAML::Key << "ModuleName" << YAML::Value << script->moduleName;
+			out << YAML::EndMap;
+		}
+
+		if (polygonShape)
+		{
+			//auto polygonShape = entity->GetComponent<PolygonShapeComponent>();
+			out << YAML::Key << "PolygonShapeComponent";
+			out << YAML::BeginMap;
+				out << YAML::Key << "Color" << YAML::Value << polygonShape->color.rgba;
+				out << YAML::Key << "Layer" << YAML::Value << polygonShape->layer;
+				out << YAML::Key << "Points";
+				out << YAML::BeginSeq;
+					for (auto& p : polygonShape->points)
+						out << YAML::Flow << p;
+				out << YAML::EndSeq;
+			out << YAML::EndMap;
+		}
+
+		if (textComponent)
+		{
+			out << YAML::Key << "TextComponent";
+			out << YAML::BeginMap;
 			out << YAML::EndMap;
 		}
 
@@ -191,6 +216,7 @@ namespace rym
 					const auto color = serializeSprite["Color"];
 					const auto flipH = serializeSprite["FlipH"].as<bool>();
 					const auto flipV = serializeSprite["FlipV"].as<bool>();
+					const auto layer = serializeSprite["Layer"].as<int>();
 					if (textureName != "null")
 					{
 						entitySpriteComponent->texture = textureName;
@@ -199,6 +225,7 @@ namespace rym
 					entitySpriteComponent->color = { color[0].as<float>(), color[1].as<float>(), color[2].as<float>(), color[3].as<float>() };
 					entitySpriteComponent->flipH = flipH;
 					entitySpriteComponent->flipV = flipV;
+					entitySpriteComponent->layer = layer;
 				}
 
 				const auto serializeCamera = e["CameraComponent"];
@@ -209,10 +236,11 @@ namespace rym
 
 					const auto current = serializeCamera["Current"].as<bool>();
 					const auto camera2D = serializeCamera["Camera2D"];
-					const auto orthoSize = camera2D["m_OrthoSize"].as<float>();
-					const auto aspectRatio = camera2D["m_OrthoSize"].as<float>();
+					const auto orthoSize = camera2D["OrthoSize"].as<float>();
+					const auto aspectRatio = camera2D["AspectRatio"].as<float>();
 
 					entityCameraComponent->current = current;
+					if (current) scene->SetMainCamera(newEntity);
 					entityCameraComponent->camera.SetOrthoSize(orthoSize);
 					entityCameraComponent->camera.Resize(aspectRatio);
 				}
@@ -225,6 +253,23 @@ namespace rym
 					entityPyScriptComponent->filePath = serializePyScript["FilePath"].as<std::string>();
 					entityPyScriptComponent->moduleName = serializePyScript["ModuleName"].as<std::string>();
 					entityPyScriptComponent->CreateScript(std::make_shared<PyScript>(entityPyScriptComponent->moduleName, newEntity));
+				}
+
+				const auto serializePolygonShape = e["PolygonShapeComponent"];
+				if (serializePolygonShape)
+				{
+					newEntity->AddComponent<PolygonShapeComponent>();
+					PolygonShapeComponent* entityPolygonShapeComponent = newEntity->GetComponent<PolygonShapeComponent>();
+					const auto color = serializePolygonShape["Color"];
+					const auto layer = serializePolygonShape["Layer"].as<int>();
+					const auto points = serializePolygonShape["Points"];
+
+					entityPolygonShapeComponent->color = { color[0].as<float>(), color[1].as<float>(), color[2].as<float>(), color[3].as<float>() };
+					entityPolygonShapeComponent->layer = layer;
+
+					for (std::size_t i = 0; i < points.size(); i++) {
+						entityPolygonShapeComponent->points.push_back({ (points[i])[0].as<float>(), (points[i])[1].as<float>() });
+					}
 				}
 			}
 		}

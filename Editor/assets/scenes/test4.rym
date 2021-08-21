@@ -1,0 +1,58 @@
+Scene: TestScene
+Entitys:
+  - Entity: Empty_Entity
+    TransformComponent:
+      Position: [911.242493, -464.153442]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+  - Entity: Sprite
+    TransformComponent:
+      Position: [209.917358, 140.49588]
+      Scale: [-197.347183, 143.148743]
+      FakeScale: [1, 1]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: "null"
+      TexturePath: "null"
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false
+      Layer: 0
+  - Entity: Sprite1
+    TransformComponent:
+      Position: [-89.2561951, 120.661179]
+      Scale: [64.0579224, 87.1983643]
+      FakeScale: [34.0579224, 57.1983604]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: carita
+      TexturePath: C:\Dev\RoraymaEngine\Editor\assets\Textures\carita.png
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false
+      Layer: 0
+  - Entity: Camera
+    TransformComponent:
+      Position: [0, 0]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+    CameraComponent:
+      Current: true
+      Camera2D:
+        AspectRatio: 1.49586773
+        OrthoSize: 500
+  - Entity: Polygon
+    TransformComponent:
+      Position: [0, 0]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+    PolygonShapeComponent:
+      Color: [1, 1, 1, 1]
+      Layer: 0
+      Points:
+        - [-290.095917, -92.1480942]
+        - [-215.012344, -351.528046]
+        - [191.121994, -399.308533]

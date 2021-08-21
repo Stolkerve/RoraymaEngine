@@ -74,6 +74,10 @@ namespace rym
 						{
 							m_SetMainCameraCallback(m_EntitySelected.entity);
 						}
+
+						//if(m_EntitySelected.cameraComponent->current)
+						//	m_SetMainCameraCallback(m_EntitySelected.entity);
+
 						//float preOrthoSize = camera->Camera.GetOrthoSize();
 						//float orthoSize = preOrthoSize;
 						if (DrawDragFloat("OrthoSize", m_EntitySelected.cameraComponent->camera.m_OrthoSize, 1.f, 500.f))
