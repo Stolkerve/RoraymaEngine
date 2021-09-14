@@ -8,7 +8,6 @@ Is a 2D opengl game engine with editor and scripting.
 - C++ 17.
 - Python (3.x) as scripting language.
 - Dynamic rendering
-- Text rendering
 - Simple
 - No bloat
 
