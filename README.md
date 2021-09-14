@@ -12,7 +12,6 @@ Is a 2D opengl game engine with editor and scripting.
 - Audio system
 - Build system
 - Support for Linux, Android
-- Text rendering
 - 2D physics
 - Lighting
 
