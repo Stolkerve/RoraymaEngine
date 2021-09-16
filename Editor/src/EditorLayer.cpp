@@ -12,11 +12,11 @@ void EditorLayer::OnStart()
 	m_Scenes.push_back(std::make_shared<Scene>("TestScene"));
 	//m_SelectedScene = &m_Scenes.back(); // More later
     m_EntitysPanel.SetContext(m_Scenes.back());
-    m_EntitysPanel.SetSceneEntitySelectedCallback([this](const std::shared_ptr<Entity>& newEntitySelected) {
+    m_EntitysPanel.SetSceneEntitySelectedCallback([this](Entity* newEntitySelected) {
         m_EntitySelected = newEntitySelected;
         });
 
-    m_EntitysPanel.m_PropertiesPanel.SetSetMainCameraCallback([this](const std::shared_ptr<Entity>& newEntitySelected) {
+    m_EntitysPanel.m_PropertiesPanel.SetSetMainCameraCallback([this](Entity* newEntitySelected) {
         m_Scenes.back()->SetMainCamera(newEntitySelected);
         });
 
@@ -79,13 +79,13 @@ glm::vec2 EditorLayer::CaculateMouseViewport()
     return m;
 }
 
-void EditorLayer::MoveEntity(const std::shared_ptr<Entity>& entity, float delta)
+void EditorLayer::MoveEntity(const Entity* entity, float delta)
 {
     if (!m_BlockSelectedEntity)
     {
-        if (entity->HaveComponent<TransformComponent>())
+        const auto transformComp = entity->GetComponent<TransformComponent>();
+        if (transformComp)
         {
-            const auto transformComp = entity->GetComponent<TransformComponent>();
             transformComp->translation += glm::vec2(m_MouseViewportDelta.x, m_MouseViewportDelta.y);
         }
     }

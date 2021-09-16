@@ -34,7 +34,7 @@ namespace rym
 			auto shaderSources = SeparateShaders(stringSource);
 			Compile(shaderSources);
 
-			m_Name = stringSource;
+			m_Name = "source";
 		}
 
 		void ShaderProgram::Compile(const std::unordered_map<GLenum, std::string>& shaderSources)

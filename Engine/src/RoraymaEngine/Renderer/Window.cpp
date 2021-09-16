@@ -31,6 +31,7 @@ namespace rym
 
 		void Window::setWindowConfig()
 		{
+			/*
 			YAML::Node node;
 			try
 			{
@@ -41,14 +42,15 @@ namespace rym
 			{
 				RYM_CORE_INFO("window_config dont load");
 			}
+			*/
 
 			//node = YAML::Load(basic_window_config);
 			//RYM_CORE_ASSERT(false,);
-			m_WindowData.Fullscreen = node["fullscreen"].as<bool>();
-			m_WindowData.Resize = node["resize"].as<bool>();
-			m_WindowData.V_Sync = node["v_sync"].as<bool>();
-			m_WindowData.Title = node["name"].as<std::string>();
-			m_WindowData.size = { node["width"].as<uint32_t>(), node["height"].as<uint32_t>() };
+			m_WindowData.Fullscreen = false;
+			m_WindowData.Resize = true;
+			m_WindowData.V_Sync = false;
+			m_WindowData.Title = "RoraymaEngine";
+			m_WindowData.size = { 1280, 720 };
 		}
 
 		bool Window::PollEvents(Event& e)

@@ -8,7 +8,7 @@ namespace rym
 		m_CurrentScene(currentScene)
 	{}
 
-	void EntitysPanel::AddNode(std::shared_ptr<Entity> entity, size_t id)
+	void EntitysPanel::AddNode(Entity* entity, size_t id)
 	{
 		const float spacing = ImGui::GetStyle().ItemInnerSpacing.x;
 		if (ImGui::Button((entity->visible ? ICON_FA_EYE : ICON_FA_EYE_SLASH)))
@@ -17,7 +17,7 @@ namespace rym
 		//(m_SelectedEntity ? ImGuiTreeNodeFlags_Selected : 0) |
 		ImGuiTreeNodeFlags flags = (m_SelectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_FramePadding;
 		bool opened = ImGui::TreeNodeEx(reinterpret_cast<void*>(id), flags, entity->Tag.c_str());
-		static std::shared_ptr<Entity> hoveredEntity = nullptr;
+		static Entity* hoveredEntity = nullptr;
 		if (ImGui::IsItemClicked())
 		{
 			m_SelectedEntity = entity;
@@ -48,7 +48,7 @@ namespace rym
 		}
 	}
 
-	void EntitysPanel::EntityClicked(const std::shared_ptr<Entity>& entity)
+	void EntitysPanel::EntityClicked(Entity* entity)
 	{
 		m_SelectedEntity = entity;
 		m_PropertiesPanel.EntityClicked(m_SelectedEntity);
@@ -77,7 +77,7 @@ namespace rym
 				if (m_CurrentScene->m_Entitys[i])
 				{
 					ImGui::PushID(static_cast<int>(i));
-					AddNode(m_CurrentScene->m_Entitys[i], (size_t)m_CurrentScene->m_Entitys[i].get());
+					AddNode(m_CurrentScene->m_Entitys[i], (size_t)m_CurrentScene->m_Entitys[i]);
 					/*
 					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 					{
@@ -149,7 +149,7 @@ namespace rym
 		m_PropertiesPanel.Render();
 	}
 
-	void EntitysPanel::SetSceneEntitySelectedCallback(std::function<void(const std::shared_ptr<Entity>&)> fun)
+	void EntitysPanel::SetSceneEntitySelectedCallback(std::function<void(Entity*)> fun)
 	{
 		m_SetSceneEntitySelected = fun;
 	}

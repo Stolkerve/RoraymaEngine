@@ -2,14 +2,13 @@
 
 #include "../Renderer/Renderer2D.hh"
 #include "../Scene/AssetsManager.hh"
-#include <sstream>
 
 namespace rym
 {
 	constexpr uint32_t MAX_ENTITYS = 10000;
 
 	Camera2D s_StaticCamera;
-	Scene::Scene(const std::string_view& name) :
+	Scene::Scene(const std::string& name) :
 		Name(name)
 	{
 		s_StaticCamera.SetOrthoSize(500.f);
@@ -34,7 +33,7 @@ namespace rym
 		RYM_INFO("Scene destructor is called");
 	}
 
-	std::string Scene::CheckEntitysName(const std::string_view& name)
+	std::string Scene::CheckEntitysName(const std::string& name)
 	{
 /*
 		auto recurSearche = [&]() {
@@ -67,9 +66,9 @@ namespace rym
 		return std::string(name);
 	}
 
-	std::shared_ptr<Entity> Scene::CreateEmptyEntity(const std::string_view& name)
+	Entity* Scene::CreateEmptyEntity(const std::string& name)
 	{
-		auto ptr = std::make_shared<Entity>();
+		auto ptr = new Entity;
 		ptr->Tag = CheckEntitysName(name);
 
 		ptr->ID = m_AvailableEntities.front();
@@ -78,7 +77,7 @@ namespace rym
 		return ptr;
 	}
 
-	void Scene::CreateEntity(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	void Scene::CreateEntity(const std::string& name, Entity* retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
 		retrivedEntity = ptr;
@@ -92,7 +91,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateEntity(const std::string_view& name)
+	void Scene::CreateEntity(const std::string& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
@@ -105,7 +104,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateEntity(const std::shared_ptr<Entity>& srcEntity, size_t where)
+	void Scene::CreateEntity(const Entity* srcEntity, size_t where)
 	{
 		auto name = CheckEntitysName(srcEntity->Tag);
 		auto ptr = CreateEmptyEntity(name);
@@ -132,7 +131,7 @@ namespace rym
 		m_Entitys.insert(m_Entitys.begin() + where, ptr);
 	}
 
-	void Scene::CreateSprite(const std::string_view& name)
+	void Scene::CreateSprite(const std::string& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
@@ -146,7 +145,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateSprite(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	void Scene::CreateSprite(const std::string& name, Entity* retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
 		retrivedEntity = ptr;
@@ -161,7 +160,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateCamera(const std::string_view& name)
+	void Scene::CreateCamera(const std::string& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
@@ -175,7 +174,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateCamera(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	void Scene::CreateCamera(const std::string& name, Entity* retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
 		retrivedEntity = ptr;
@@ -190,7 +189,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreatePolygonShape(const std::string_view& name)
+	void Scene::CreatePolygonShape(const std::string& name)
 	{
 		auto ptr = CreateEmptyEntity(name);
 
@@ -204,7 +203,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreatePolygonShape(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	void Scene::CreatePolygonShape(const std::string& name, Entity* retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
 		retrivedEntity = ptr;
@@ -219,7 +218,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::CreateText(const std::string_view& name, std::shared_ptr<Entity>& retrivedEntity)
+	void Scene::CreateText(const std::string& name, Entity* retrivedEntity)
 	{
 		auto ptr = CreateEmptyEntity(name);
 		retrivedEntity = ptr;
@@ -233,7 +232,7 @@ namespace rym
 		m_Entitys.push_back(ptr);
 	}
 
-	void Scene::DeleteEntity(const std::string_view& name)
+	void Scene::DeleteEntity(const std::string& name)
 	{
 		std::string line = "Entity ";
 		line += name;
@@ -246,17 +245,17 @@ namespace rym
 			{
 				// Recover the ID back to the queue
 				m_AvailableEntities.push(e->ID);
-				//auto& ent = *(m_Entitys.begin() + i);
+				auto& ent = *(m_Entitys.begin() + i);
 				m_Entitys.erase(m_Entitys.begin() + i);
-				//if(ent != nullptr)
-				//	ent.reset(); // force the delete of the entity
+				if (ent != nullptr)
+					delete ent; // force the delete of the entity
 				return;
 			}
 			i++;
 		}
 	}
 
-	std::shared_ptr<Entity> Scene::GetEntity(const std::string_view& name)
+	Entity* Scene::GetEntity(const std::string& name)
 	{
 		for (auto& e : m_Entitys)
 			if (e->Tag == name)
@@ -265,7 +264,7 @@ namespace rym
 		return nullptr;
 	}
 
-	std::shared_ptr<Entity> Scene::GetEntity(uint32_t ID)
+	Entity* Scene::GetEntity(uint32_t ID)
 	{
 		for (auto& e : m_Entitys)
 			if (e->ID == ID)
@@ -295,7 +294,7 @@ namespace rym
 				if (e->NumOfComponents() == 1 && transform)
 				{
 					auto transform = e->GetComponent<TransformComponent>();
-					Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("GhostEditor"), Color::WHITE, 21, e->ID);
+					Renderer2D::DrawQuad(transform->translation, { camSize, camSize }, AssetsManager::GetTexture("PivotEditor"), Color::WHITE, 21, e->ID);
 				}
 
 				if (script)
@@ -435,7 +434,7 @@ namespace rym
 		}
 	}
 
-	void Scene::SetMainCamera(const std::shared_ptr<Entity>& entity)
+	void Scene::SetMainCamera(const Entity* entity)
 	{
 		if (m_MainCamera)
 		{

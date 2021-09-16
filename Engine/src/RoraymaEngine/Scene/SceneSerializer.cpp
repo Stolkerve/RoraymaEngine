@@ -46,7 +46,7 @@ namespace rym
 		return out;
 	}
 
-	static void SerializeEntity(YAML::Emitter& out, std::shared_ptr<Entity>& entity)
+	static void SerializeEntity(YAML::Emitter& out, Entity* entity)
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity" << YAML::Value << entity->Tag;
@@ -185,7 +185,7 @@ namespace rym
 			for (const auto& e : entitys)
 			{
 				const auto tag = e["Entity"].as<std::string>();
-				std::shared_ptr<Entity> newEntity = scene->CreateEmptyEntity(tag);
+				Entity* newEntity = scene->CreateEmptyEntity(tag);
 				scene->m_Entitys.push_back(newEntity);
 
 				const auto serializeTransform = e["TransformComponent"];

@@ -5,15 +5,13 @@
 #include <future>
 
 #include <glm/gtc/type_ptr.hpp>
-
 #include <Portable_File_Dialogs/portable-file-dialogs.h>
 
 #include "CodeEditorPanel.hh"
 #include "../CustomImGuiWidgets.hh"
 #include "FoldersPanel.hh"
+
 #include <imgui/imgui_internal.h>
-
-
 namespace rym
 {
 	void PropertiesPanel::Render()
@@ -116,7 +114,7 @@ namespace rym
 			{
 				ImGui::Separator();
 
-				if (ImGui::CollapsingHeader(ICON_FA_CODE"  PyScripts Component", headerFlags))
+				if (ImGui::CollapsingHeader(ICON_FA_PYTHON"  PyScripts Component", headerFlags))
 				{
 					if (!DeleteComponent<PyScriptComponent>(m_EntitySelected.entity))
 					{
@@ -238,7 +236,7 @@ namespace rym
 		ImGui::End();
 	}
 
-	void PropertiesPanel::SetSetMainCameraCallback(std::function<void(const std::shared_ptr<Entity>&)> fun)
+	void PropertiesPanel::SetSetMainCameraCallback(std::function<void(Entity*)> fun)
 	{
 		m_SetMainCameraCallback = fun;
 	}

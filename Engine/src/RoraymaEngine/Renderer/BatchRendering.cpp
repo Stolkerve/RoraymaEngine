@@ -165,6 +165,46 @@ namespace rym
 			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
 		}
 
+		void Polygons::DrawQuad(const glm::vec4* verticesPos, const glm::vec2* uv, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer, int ID)
+		{
+			if (m_VerticesCount + m_QuadVertexCount >= m_MaxVertices)
+				NextBatch();
+
+			float textureIndex = 0.0f;
+			for (uint32_t i = 1; i < m_TextureSlotIndex; i++)
+			{
+				if (*m_TextureSlots[i] == *texture)
+				{
+					textureIndex = (float)i;
+					break;
+				}
+			}
+
+			if (textureIndex == 0.0f)
+			{
+				if (m_TextureSlotIndex >= m_MaxTextureSlots)
+					NextBatch();
+
+				textureIndex = (float)m_TextureSlotIndex;
+				m_TextureSlots[m_TextureSlotIndex] = texture;
+				m_TextureSlotIndex++;
+			}
+
+			for (size_t i = 0; i < m_QuadVertexCount; i++)
+			{
+				m_VertexBufferPtr->Position = glm::vec4(verticesPos[i].x, verticesPos[i].y, 0.f, 1.f);;
+				m_VertexBufferPtr->Color = color.GetColor();
+				m_VertexBufferPtr->TexCoord = uv[i];
+				m_VertexBufferPtr->TexIndex = textureIndex;
+				m_VertexBufferPtr->Layer = float(layer);
+				m_VertexBufferPtr->EntityID = ID;
+				m_VertexBufferPtr++;
+			}
+
+			m_VerticesCount += m_QuadVertexCount;
+			BatchStatistics::Get().NumOfVertices += m_QuadVertexCount;
+		}
+
 		void Polygons::DrawCircle(const glm::mat4& transform, const Color& color, int layer, int ID)
 		{
 			size_t vertexCount = m_CircleVertices.size();

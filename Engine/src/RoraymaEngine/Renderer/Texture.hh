@@ -60,9 +60,16 @@ namespace rym
 		class Texture2D : public Texture
 		{
 		public:
-			Texture2D(const std::string_view& path, TexConfig config = {});
-			Texture2D(uint32_t width, uint32_t height, uint32_t* data, TexConfig config = {});
+			Texture2D() = default;
+			//Texture2D(const std::string_view& path, TexConfig config = {});
+			//Texture2D(uint32_t width, uint32_t height, uint32_t* data, TexConfig config = {});
 			~Texture2D();
+			
+			void GenTexture(uint32_t width, uint32_t height, TexConfig config);
+			void SubTexture(void* data, int offsetX, int offsetY, uint32_t width, uint32_t height,TexConfig config);
+			void LoadFromFile(const std::string& path, TexConfig config = {});
+			void LoadFromMemory(uint32_t width, uint32_t height, uint32_t* data, TexConfig config = {});
+			void LoadFromMemoryBase64(const std::string& source, TexConfig config = {});
 
 			virtual uint32_t GetWidth() const override { return m_Width; };
 			virtual uint32_t GetHeight() const override { return m_Height; };

@@ -13,16 +13,16 @@ namespace rym
 		~EntitysPanel() = default;
 
 		inline void SetContext(const std::shared_ptr<Scene>& newScene) { m_CurrentScene = newScene; m_PropertiesPanel.m_CurrentScene = newScene; }
-		void EntityClicked(const std::shared_ptr<Entity>& entity);
+		void EntityClicked(Entity* entity);
 		void Render();
-		void SetSceneEntitySelectedCallback(std::function<void(const std::shared_ptr<Entity>&)> fun);
+		void SetSceneEntitySelectedCallback(std::function<void(Entity*)> fun);
 		//std::function<void(const std::shared_ptr<Entity>&)>
 		PropertiesPanel m_PropertiesPanel;
 	private:
-		void AddNode(std::shared_ptr<Entity> entity, size_t id);
+		void AddNode(Entity* entity, size_t id);
 
-		std::shared_ptr<Entity> m_SelectedEntity = nullptr;
+		Entity* m_SelectedEntity = nullptr;
 		std::shared_ptr<Scene> m_CurrentScene;
-		std::function<void(const std::shared_ptr<Entity>&)> m_SetSceneEntitySelected;
+		std::function<void(Entity*)> m_SetSceneEntitySelected;
 	};
 }

@@ -8,6 +8,8 @@
 #include <GLFW/glfw3.h>
 
 #include "../App.hh"
+#include "../../Utils/Base64.hh"
+#include "../../Scene/AssetsManager.hh"
 
 rym::ImGuiLayer::ImGuiLayer() :
 	Layer("ImGui Layer")
@@ -33,15 +35,18 @@ void rym::ImGuiLayer::OnStart()
         style.WindowRounding = 0.0f;
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
-
+    //io.Fonts->AddFontFromMemoryTTF()
     io.Fonts->AddFontDefault();
     io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/theme/fonts/Roboto-Medium.ttf", 15.0f);
-    static const ImWchar aws_icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
-    //static const ImWchar ke_icons_ranges[] = { ICON_MIN_KI, ICON_MAX_KI, 0 };
+
     ImFontConfig icons_config; icons_config.MergeMode = true; icons_config.PixelSnapH = true;
-    io.Fonts->AddFontFromFileTTF("assets/theme/fonts/fa-solid-900.ttf", 15.0f, &icons_config, aws_icons_ranges);
-    //io.Fonts->AddFontFromFileTTF("assets/theme/fonts/kenney-icon-font.ttf", 16.0f, &icons_config, ke_icons_ranges);
-    //IM_ASSERT(font != NULL);
+
+    static const ImWchar awbs_icons_ranges[] = { ICON_MIN_FAB, ICON_MAX_FAB, 0 };
+    AssetsManager::PushImFont("awfb", io.Fonts->AddFontFromFileTTF("assets/theme/fonts/FontAwesome5Brands-Regular-400.ttf", 16.0f, &icons_config, awbs_icons_ranges));
+
+    static const ImWchar aws_icons_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+    AssetsManager::PushImFont("awf", io.Fonts->AddFontFromFileTTF("assets/theme/fonts/FontAwesome5Free-Solid-900.ttf", 15.5f, &icons_config, aws_icons_ranges));
+
 
     rym::App& app = rym::App::GetInstance();
     GLFWwindow* window = app.GetWindow()->GetContextWindow();

@@ -17,7 +17,7 @@ namespace rym
 		~PyScript() = default;
 		PyScript() = default;
 
-		PyScript(const std::string& moduleName, const std::shared_ptr<Entity>& entity)
+		PyScript(const std::string& moduleName, Entity* entity)
 		{
 			//Can't add new modules after the interpreter has been initialized
 			m_ModuleName = moduleName;
@@ -36,7 +36,7 @@ namespace rym
 			}
 		}
 
-		std::shared_ptr<Entity> GetGameEntity()
+		Entity* GetGameEntity()
 		{
 			return m_Entity;
 		}
@@ -88,7 +88,7 @@ namespace rym
 			}
 		}
 
-		std::shared_ptr<Entity> m_Entity;
+		Entity* m_Entity;
 	private:
 		std::string m_ModuleName;
 		pybind11::module m_PyScriptModule;

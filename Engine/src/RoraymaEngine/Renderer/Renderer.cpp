@@ -115,6 +115,11 @@ namespace rym
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
+		void Renderer::PixelStorei(int pname, int value)
+		{
+			glPixelStorei(pname, value);
+		}
+
 		glm::vec2 Renderer::GetFrameBufferSize()
 		{
 			glm::ivec2 f = { 0, 0 };

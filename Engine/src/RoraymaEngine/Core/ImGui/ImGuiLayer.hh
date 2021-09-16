@@ -4,6 +4,7 @@
 
 #include "../Layer.hh"
 #include "IconsFontAwesome5.h"
+#include "IconsFontAwesome5Brands.h"
 //#include "IconsKenney.h"
 
 namespace rym

@@ -51,6 +51,7 @@ namespace rym
 			void DrawQuad(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
 			void DrawText_(const glm::vec4* verticesPos, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
+			void DrawQuad(const glm::vec4* verticesPos, const glm::vec2* uv, const std::shared_ptr<Texture2D>& texture, const Color& color, int layer = 0, int ID = -1);
 			void DrawCircle(const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawPolygon(const std::vector<glm::vec2>& vertices, const glm::mat4& transform, const Color& color, int layer = 0, int ID = -1);
 			void DrawTriangle(const glm::mat4& transform, const Color& color, int ID = -1);

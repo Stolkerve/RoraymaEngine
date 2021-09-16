@@ -135,14 +135,16 @@ namespace rym
 	};
 
 	struct TextComponent {
-		TextComponent() :
-			characters("assets/theme/fonts/Antonio-Bold.ttf")
+		TextComponent()
+			//: characters("assets/theme/fonts/Antonio-Bold.ttf")
 		{
 
 		}
-		Characters characters;
+		//Characters characters;
+		std::string font = "Default";
 		glm::vec2 pos = { 0.f, 0.f };
 		glm::vec2 scale = { 1.f, 1.f };
+		//float fontSize = 20;
 		int layer = 0;
 		std::string text;
 		rym::Color color = rym::Color::WHITE;

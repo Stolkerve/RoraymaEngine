@@ -22,9 +22,9 @@ bool PointCircle(float px, float py, float cx, float cy, float r) {
 
 namespace rym
 {
-	void SEOverlay::DrawOverlay(std::weak_ptr<Entity> ent, const EditorCamera& editorCamera, bool& blockSelectedEntity)
+	void SEOverlay::DrawOverlay(Entity* entity, const EditorCamera& editorCamera, bool& blockSelectedEntity)
 	{
-		if (auto entity = ent.lock())
+		if (entity)
 		{
 			Renderer::SetLineWidth(1.6f);
 			Renderer2D::BeginWire(editorCamera);

@@ -1,0 +1,29 @@
+Scene: TestScene
+Entitys:
+  - Entity: Camera
+    TransformComponent:
+      Position: [0, 0]
+      Scale: [1, 1]
+      FakeScale: [1, 1]
+      Rotation: 0
+    CameraComponent:
+      Current: true
+      Camera2D:
+        AspectRatio: 1.49586773
+        OrthoSize: 500
+  - Entity: Sprite
+    TransformComponent:
+      Position: [-186.629623, 9.91731834]
+      Scale: [186.124023, 153.066223]
+      FakeScale: [1, 1]
+      Rotation: 0
+    SpriteComponent:
+      TextureName: "null"
+      TexturePath: "null"
+      Color: [1, 1, 1, 1]
+      FlipH: false
+      FlipV: false
+      Layer: 0
+    PyScriptComponent:
+      FilePath: C:\Dev\RoraymaEngine\Editor\assets\scripts\Sprite.py
+      ModuleName: Sprite

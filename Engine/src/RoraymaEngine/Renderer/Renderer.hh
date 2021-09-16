@@ -29,6 +29,7 @@ namespace rym
 			static void EnableWireFrame();
 			static void SetLineWidth(float width);
 			static void DisableWireFrame();
+			static void PixelStorei(int pname, int value);
 
 			static Caps* RendererCaps;
 

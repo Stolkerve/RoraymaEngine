@@ -18,7 +18,7 @@ namespace rym {
 	void DragMouseDisable();
 
 	template<typename T>
-	bool DeleteComponent(const std::shared_ptr<Entity>& entitySelected)
+	bool DeleteComponent(Entity* entitySelected)
 	{
 		bool res = false;
 		if (ImGui::BeginPopupContextItem())

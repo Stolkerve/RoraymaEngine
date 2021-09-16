@@ -14,22 +14,22 @@ namespace rym
 		PropertiesPanel() = default;
 		~PropertiesPanel() = default;
 
-		void EntityClicked(const std::shared_ptr<Entity>& entity)
+		void EntityClicked(Entity* entity)
 		{
 			m_EntitySelected = entity;
 		}
 
 		void Render();
 
-		void SetSetMainCameraCallback(std::function<void(const std::shared_ptr<Entity>&)> fun);
+		void SetSetMainCameraCallback(std::function<void(Entity*)> fun);
 	private:
-		std::function<void(const std::shared_ptr<Entity>&)> m_SetMainCameraCallback;
+		std::function<void(Entity*)> m_SetMainCameraCallback;
 		//std::shared_ptr<Entity> m_EntitySelected = nullptr;
 		std::shared_ptr<Scene> m_CurrentScene;
 		//TransformComponent* m_EntityTransform;
 
 		struct EntitySelected{
-			std::shared_ptr<Entity> entity;
+			Entity* entity = nullptr;
 			TransformComponent* transformComponent;
 			CameraComponent* cameraComponent;
 			SpriteComponent* spriteComponent;
@@ -37,7 +37,7 @@ namespace rym
 			PolygonShapeComponent* polygonShapeComponent;
 			TextComponent* textComponent;
 
-			EntitySelected& operator=(const std::shared_ptr<Entity>& other) {
+			EntitySelected& operator=(Entity* other) {
 				this->entity = other;
 				if (this->entity)
 				{

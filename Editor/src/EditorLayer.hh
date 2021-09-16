@@ -33,7 +33,7 @@ private:
 	void UpdateGameMode(float _delta);
 	void RenderCartesianPlane();
 	void CalculateDeltaWorlMouse();
-	void MoveEntity(const std::shared_ptr<Entity>& entity, float delta);
+	void MoveEntity(const Entity* entity, float delta);
 	void OpenScene(const std::vector<std::string>& scenesPath);
 	void OpenScene(const std::string& scenePath);
 	void SaveScene(const std::string& scenePath);
@@ -44,7 +44,7 @@ private:
 	std::shared_ptr<Scene>* m_SelectedScene;
 	std::shared_ptr<FrameBuffer> m_FrameBuffer;
 	std::vector<std::shared_ptr<Scene>> m_Scenes;
-	std::shared_ptr<Entity> m_EntitySelected = nullptr;
+	Entity* m_EntitySelected = nullptr;
 	//DynamicGrid m_DynamicGrid;
 
 	EditorCamera m_EditorCamera;
