@@ -10,3 +10,7 @@ bin-int/
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+*.tgz.1
+*.tgz
+Python-3.8.0
+.localpython
