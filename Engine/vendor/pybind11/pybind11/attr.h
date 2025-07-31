@@ -9,7 +9,7 @@
 */
 
 #pragma once
-
+#include <cstdint>
 #include "cast.h"
 
 PYBIND11_NAMESPACE_BEGIN(PYBIND11_NAMESPACE)

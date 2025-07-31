@@ -1,5 +1,3 @@
-include "./python-script/premake5.lua"
-
 project "Engine"
 	kind "StaticLib"
 	language "C++"
@@ -43,12 +41,12 @@ project "Engine"
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.pybind11}",
 		"%{IncludeDir.freetype}",
-		pythonIncludePath,
+		"../.localpython/include/python3.8"
 	}
 
 	libdirs
 	{
-		pythonLibPath
+		"../.localpython/lib"
 	}
 
 	filter "system:linux"
@@ -58,7 +56,7 @@ project "Engine"
 		{
 			"X11",
 			"dl",
-			"python3.lib",
+			"python3.8",
 			"pthread",
 			"GLFW",
 			"Glad",

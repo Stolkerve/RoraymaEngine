@@ -1,5 +1,3 @@
-include "./python-script/premake5.lua"
-
 project "Editor"
 	kind "ConsoleApp"
 	language "C++"
@@ -28,18 +26,18 @@ project "Editor"
 		"%{wks.location}/Engine/src",
 		"%{wks.location}/Engine/vendor",
 		"%{wks.location}/Engine/vendor/pybind11",
-		pythonIncludePath,
 		"%{IncludeDir.glm}",
+		"../.localpython/include/python3.8"
 	}
 	libdirs
 	{
-		pythonLibPath
+		"../.localpython/lib"
 	}
 	filter "system:linux"
 		links
 		{
 			"Engine",
-			"python3.lib",
+			"python3.8",
 			"dl",
 			"pthread",
 			"X11",

@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdint>
 #include <pybind11/embed.h>
 #include "Entity.hh"
 

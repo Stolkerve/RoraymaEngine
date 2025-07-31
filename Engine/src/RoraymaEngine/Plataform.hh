@@ -8,7 +8,6 @@
 	#endif // WIN64
 
 #elif __linux__
-	#error "Linux is a actualy plataform target, but, there is some wire isues with imgui docking in the distro I use, Linux Lite. Also, I need implement some plataflorm specific inputs and I not have any idea of how use X11. Sorry :p."
 	#define RYM_PLATFORM_LINUX
 #elif __ANDROID__
 	#error "Later my friend :D"
